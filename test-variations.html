@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Variations</title>
+</head>
+<body>
+    <h1>Testing Product Variations</h1>
+    <div id="result"></div>
+
+    <script>
+        async function testVariations() {
+            const productId = '98746c9c-880b-11f0-a1b3-084957d83787';
+            const apiUrl = `http://localhost:3001/api/products/${productId}/variations`;
+            
+            try {
+                console.log('Fetching from:', apiUrl);
+                const response = await fetch(apiUrl);
+                console.log('Response status:', response.status);
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                document.getElementById('result').innerHTML = `
+                    <h2>API Response:</h2>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                    <h2>Number of variations: ${data.data?.length || 0}</h2>
+                `;
+                
+                if (data.success && data.data && data.data.length > 0) {
+                    console.log('✅ Variations found:', data.data.length);
+                    data.data.forEach((variation, index) => {
+                        console.log(`Variation ${index + 1}:`, variation);
+                    });
+                } else {
+                    console.log('❌ No variations found');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Run the test when page loads
+        testVariations();
+    </script>
+</body>
+</html>

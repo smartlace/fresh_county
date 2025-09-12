@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Alert - {{companyName}}</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            line-height: 1.6; 
+            color: #000; 
+            margin: 0; 
+            padding: 20px; 
+            background-color: #f5f5f5; 
+        }
+        .email-card { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background-color: white; 
+            border: 1px solid #ddd;
+            padding: 40px; 
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
+        }
+        .company-name { 
+            font-size: 28px; 
+            font-weight: bold; 
+            color: #000; 
+            margin: 0;
+        }
+        .content { 
+            text-align: center; 
+        }
+        h1 { 
+            color: #000; 
+            margin-bottom: 10px; 
+            font-size: 24px; 
+        }
+        .subtitle { 
+            color: #666; 
+            margin-bottom: 30px; 
+            font-size: 16px; 
+        }
+        .info-box { 
+            background: #f8f9fa; 
+            padding: 20px; 
+            border: 1px solid #ddd;
+            margin: 20px 0; 
+            text-align: left; 
+        }
+        .button { 
+            display: inline-block; 
+            background-color: #000; 
+            color: white; 
+            padding: 15px 30px; 
+            text-decoration: none; 
+            margin: 20px 0; 
+            font-weight: bold; 
+        }
+        .highlight-box { 
+            background: #f8f9fa; 
+            border: 1px solid #000; 
+            padding: 15px; 
+            margin: 20px 0; 
+        }
+        .footer { 
+            text-align: center; 
+            margin-top: 30px; 
+            padding-top: 20px; 
+            border-top: 1px solid #ddd; 
+            color: #666; 
+            font-size: 12px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="email-card">
+        <div class="header">
+            {{#if logoUrl}}
+            <img src="{{logoUrl}}" alt="{{companyName}}" style="max-width: 150px; height: auto; margin-bottom: 20px;">
+            {{/if}}
+            <h1 class="company-name">{{companyName}}</h1>
+        </div>
+
+        <div class="content">
+            <h1>Admin Alert</h1>
+            <p class="subtitle">{{title}}</p>
+
+            <div class="info-box">
+                <p><strong>Alert Type:</strong> {{type}}</p>
+                <p><strong>Message:</strong> {{message}}</p>
+                <p><strong>Timestamp:</strong> {{timestamp}}</p>
+                {{#if data}}
+                <hr>
+                <p><strong>Details:</strong></p>
+                <div style="background: #f8f9fa; padding: 15px; border: 1px solid #ddd; margin: 10px 0;">
+                    {{#if data.orderNumber}}
+                    <p><strong>Order Number:</strong> {{data.orderNumber}}</p>
+                    {{/if}}
+                    {{#if data.customerName}}
+                    <p><strong>Customer:</strong> {{data.customerName}}</p>
+                    {{/if}}
+                    {{#if data.customerEmail}}
+                    <p><strong>Email:</strong> {{data.customerEmail}}</p>
+                    {{/if}}
+                    {{#if data.productRequested}}
+                    <p><strong>Product Requested:</strong> {{data.productRequested}}</p>
+                    {{/if}}
+                    {{#if data.customerMessage}}
+                    <p><strong>Customer Message:</strong></p>
+                    <div style="background: #ffffff; padding: 10px; border: 1px solid #ccc; margin: 5px 0; white-space: pre-wrap;">{{data.customerMessage}}</div>
+                    {{/if}}
+                    {{#if data.inquiryType}}
+                    <p><strong>Inquiry Type:</strong> {{data.inquiryType}}</p>
+                    {{/if}}
+                    {{#if data.submittedAt}}
+                    <p><strong>Submitted At:</strong> {{data.submittedAt}}</p>
+                    {{/if}}
+                    {{#if data.amount}}
+                    <p><strong>Amount:</strong> {{data.amount}}</p>
+                    {{/if}}
+                    {{#if data.status}}
+                    <p><strong>Order Status:</strong> {{data.status}}</p>
+                    {{/if}}
+                    {{#if data.paymentStatus}}
+                    <p><strong>Payment Status:</strong> {{data.paymentStatus}}</p>
+                    {{/if}}
+                </div>
+                {{/if}}
+            </div>
+
+            <a href="{{#if adminUrl}}{{adminUrl}}{{else}}{{websiteUrl}}/admin{{/if}}" class="button">View Admin Panel</a>
+
+            <div class="footer">
+                <p>{{companyName}} | <a href="mailto:{{supportEmail}}">{{supportEmail}}</a></p>
+                <p>Thank you for shopping with us!</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
