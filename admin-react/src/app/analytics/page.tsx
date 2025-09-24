@@ -72,7 +72,7 @@ export default function Analytics() {
     { value: 'month', label: 'Monthly' }
   ];
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://freshcounty.com/api';
 
   useEffect(() => {
     // Set default dates (last 30 days)
@@ -89,7 +89,7 @@ export default function Analytics() {
       setLoading(true);
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      let url = `${API_BASE_URL}/api/admin/analytics?group_by=${groupBy}`;
+      let url = `${API_BASE_URL}/admin/analytics?group_by=${groupBy}`;
       if (startDate) url += `&start_date=${startDate}`;
       if (endDate) url += `&end_date=${endDate}`;
 

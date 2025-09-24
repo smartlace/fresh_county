@@ -6,7 +6,7 @@ export function getProxiedImageUrl(originalUrl: string): string {
   
   // Define URLs that need to be proxied to bypass CSP
   const needsProxy = [
-    'http://localhost:3001/',
+    'https://freshcounty.com/api/',
     'https://images.unsplash.com/',
     'https://unsplash.com/',
     'https://via.placeholder.com/'

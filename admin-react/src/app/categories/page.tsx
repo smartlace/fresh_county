@@ -70,7 +70,7 @@ export default function Categories() {
       setLoading(true);
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/products/categories/tree`, {
+      const response = await fetch(`${API_BASE_URL}/products/categories/tree`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -97,7 +97,7 @@ export default function Categories() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/products/categories`, {
+      const response = await fetch(`${API_BASE_URL}/products/categories`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -134,8 +134,8 @@ export default function Categories() {
       console.log('Submitting category with payload:', payload);
 
       const url = isEditMode 
-        ? `${API_BASE_URL}/api/products/categories/${selectedCategory?.id}`
-        : `${API_BASE_URL}/api/products/categories`;
+        ? `${API_BASE_URL}/products/categories/${selectedCategory?.id}`
+        : `${API_BASE_URL}/products/categories`;
       
       const method = isEditMode ? 'PUT' : 'POST';
 
@@ -172,7 +172,7 @@ export default function Categories() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/products/categories/${categoryId}`, {
+      const response = await fetch(`${API_BASE_URL}/products/categories/${categoryId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 
 // Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, '../../uploads');
+const uploadsDir = process.env.UPLOAD_PATH || path.join(__dirname, '../../uploads');
 const productsDir = path.join(uploadsDir, 'products');
 const categoriesDir = path.join(uploadsDir, 'categories');
 const blogDir = path.join(uploadsDir, 'blog');

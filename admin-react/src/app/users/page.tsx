@@ -9,7 +9,7 @@ import { Listbox, Transition } from '@headlessui/react';
 import { ChevronUpDownIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon, PencilIcon, TrashIcon, UserIcon, UsersIcon, ShieldCheckIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 
 interface User {
-  id: number;
+  id: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -75,9 +75,9 @@ export default function Users() {
   const [showUserModal, setShowUserModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [updatingUserId, setUpdatingUserId] = useState<number | null>(null);
+  const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://freshcounty.com/api';
 
   // Debounce search query
   useEffect(() => {
@@ -110,7 +110,7 @@ export default function Users() {
       setLoading(true);
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      let url = `${API_BASE_URL}/api/admin/users?page=${currentPage}&limit=20`;
+      let url = `${API_BASE_URL}/admin/users?page=${currentPage}&limit=20`;
       if (roleFilter) url += `&role=${roleFilter}`;
       if (statusFilter) url += `&status=${statusFilter}`;
       if (debouncedSearchQuery) url += `&search=${encodeURIComponent(debouncedSearchQuery)}`;
@@ -129,6 +129,22 @@ export default function Users() {
       const data = await response.json();
 
       if (response.ok && data.success) {
+        console.log('Raw API response:', data);
+        console.log('Users loaded:', data.data.users?.slice(0, 2)); // Log first 2 users for debugging
+        
+        // Debug each user's ID specifically
+        if (data.data.users && data.data.users.length > 0) {
+          data.data.users.slice(0, 3).forEach((user: any, index: number) => {
+            console.log(`User ${index} ID debug:`, {
+              id: user.id,
+              idType: typeof user.id,
+              idLength: user.id ? user.id.length : 'N/A',
+              email: user.email,
+              fullUser: user
+            });
+          });
+        }
+        
         setUsers(data.data.users || []);
         setPagination(data.data.pagination);
       } else {
@@ -146,7 +162,7 @@ export default function Users() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/users/stats`, {
+      const response = await fetch(`${API_BASE_URL}/admin/users/stats`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -176,7 +192,10 @@ export default function Users() {
     setCurrentPage(1);
   };
 
-  const toggleUserStatus = async (userId: number, isActive: boolean) => {
+  const toggleUserStatus = async (userId: string, isActive: boolean) => {
+    // Debug logging
+    console.log('toggleUserStatus called with:', { userId, type: typeof userId, isActive });
+    
     // Add confirmation dialog
     const action = isActive ? 'activate' : 'deactivate';
     const confirmMessage = `Are you sure you want to ${action} this user? ${!isActive ? 'Deactivated users will not be able to log in.' : 'The user will regain access to their account.'}`;
@@ -185,11 +204,20 @@ export default function Users() {
       return;
     }
 
+    // Validate userId
+    if (!userId || userId === '' || typeof userId !== 'string') {
+      console.error('Invalid userId:', userId);
+      toast.error('Invalid user ID. Please refresh the page and try again.');
+      return;
+    }
+
     try {
       setUpdatingUserId(userId);
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/users/${userId}/status`, {
+      console.log('Making API call to:', `${API_BASE_URL}/admin/users/${userId}/status`);
+      
+      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/status`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -225,7 +253,7 @@ export default function Users() {
 
   const showAddUserModal = () => {
     setSelectedUser({
-      id: 0,
+      id: '',
       first_name: '',
       last_name: '',
       email: '',
@@ -246,8 +274,8 @@ export default function Users() {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
       const url = isEditMode 
-        ? `${API_BASE_URL}/api/admin/users/${selectedUser?.id}`
-        : `${API_BASE_URL}/api/admin/users`;
+        ? `${API_BASE_URL}/admin/users/${selectedUser?.id}`
+        : `${API_BASE_URL}/admin/users`;
       
       const method = isEditMode ? 'PUT' : 'POST';
       console.log('Request URL:', url);
@@ -280,13 +308,13 @@ export default function Users() {
     }
   };
 
-  const deleteUser = async (userId: number) => {
+  const deleteUser = async (userId: string) => {
     if (!confirm('Are you sure you want to permanently delete this user? This action cannot be undone and will remove all user data including order history.')) return;
 
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/users/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -779,6 +807,7 @@ export default function Users() {
                         <div className={`text-sm font-medium ${user.is_active ? 'text-gray-900' : 'text-gray-500'}`}>
                           {user.first_name} {user.last_name}
                           {!user.is_active && <span className="ml-2 text-xs text-red-600">(Inactive)</span>}
+                          {(!user.id || user.id === '') && <span className="ml-2 text-xs text-red-600 bg-red-100 px-1 rounded">(Missing ID)</span>}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -808,13 +837,14 @@ export default function Users() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                         <button
                           onClick={() => editUser(user)}
-                          className="text-orange-600 hover:text-orange-900 mr-3"
+                          disabled={!user.id || user.id === ''}
+                          className="text-orange-600 hover:text-orange-900 mr-3 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <PencilIcon className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => toggleUserStatus(user.id, !user.is_active)}
-                          disabled={updatingUserId === user.id}
+                          disabled={updatingUserId === user.id || !user.id || user.id === ''}
                           className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium border disabled:opacity-50 disabled:cursor-not-allowed ${
                             user.is_active 
                               ? 'border-red-200 text-red-700 bg-red-50 hover:bg-red-100' 
@@ -835,7 +865,8 @@ export default function Users() {
                         </button>
                         <button
                           onClick={() => deleteUser(user.id)}
-                          className="text-red-600 hover:text-red-900"
+                          disabled={!user.id || user.id === ''}
+                          className="text-red-600 hover:text-red-900 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <TrashIcon className="h-4 w-4" />
                         </button>
@@ -883,11 +914,11 @@ export default function Users() {
 
                 // Only include password for new users or if provided for existing users
                 const password = formData.get('password') as string;
-                if (!isEditMode || password) {
-                  userData.password = password;
-                }
+                const userDataWithPassword = !isEditMode || password 
+                  ? { ...userData, password } 
+                  : userData;
 
-                saveUser(userData);
+                saveUser(userDataWithPassword);
               }}
               className="space-y-4"
             >

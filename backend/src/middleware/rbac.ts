@@ -40,6 +40,10 @@ export enum Permission {
   EDIT_SETTINGS = 'edit_settings',
   MANAGE_SYSTEM = 'manage_system',
   
+  // Shipping Management
+  VIEW_SHIPPING_ZONES = 'view_shipping_zones',
+  MANAGE_SHIPPING_ZONES = 'manage_shipping_zones',
+  
   // Coupon Management
   VIEW_COUPONS = 'view_coupons',
   CREATE_COUPONS = 'create_coupons',
@@ -91,9 +95,6 @@ export const ROLE_PERMISSIONS: Record<string, Permission[]> = {
     Permission.UPDATE_ORDER_STATUS,
     Permission.CANCEL_ORDERS,
     Permission.PROCESS_REFUNDS,
-    
-    // User Management (Read Only - to see customer details)
-    Permission.VIEW_USERS,
     
     // Reports (Order-related only)
     Permission.VIEW_REPORTS,
@@ -152,9 +153,9 @@ export const ROLE_PERMISSIONS: Record<string, Permission[]> = {
     Permission.MANAGE_BLOG_TAGS,
     Permission.MODERATE_BLOG_COMMENTS,
     
-    // System Settings (Limited)
-    Permission.VIEW_SETTINGS,
-    Permission.EDIT_SETTINGS,
+    // Shipping Management (Operational)
+    Permission.VIEW_SHIPPING_ZONES,
+    Permission.MANAGE_SHIPPING_ZONES,
     
     // User Management (Read Only)
     Permission.VIEW_USERS,

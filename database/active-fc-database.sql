@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `blog_categories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `blog_categories` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `name` varchar(100) NOT NULL,
   `slug` varchar(100) NOT NULL,
   `description` text,
@@ -41,7 +41,7 @@ CREATE TABLE `blog_categories` (
   KEY `idx_is_active` (`is_active`),
   KEY `created_by` (`created_by`),
   CONSTRAINT `blog_categories_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -62,7 +62,7 @@ DROP TABLE IF EXISTS `blog_comments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `blog_comments` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `post_id` varchar(36) NOT NULL,
   `parent_id` varchar(36) DEFAULT NULL,
   `author_name` varchar(100) NOT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE `blog_comments` (
   KEY `idx_created_at` (`created_at`),
   CONSTRAINT `blog_comments_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `blog_posts` (`id`) ON DELETE CASCADE,
   CONSTRAINT `blog_comments_ibfk_2` FOREIGN KEY (`parent_id`) REFERENCES `blog_comments` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,7 +101,7 @@ DROP TABLE IF EXISTS `blog_post_tags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `blog_post_tags` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `post_id` varchar(36) NOT NULL,
   `tag_id` varchar(36) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -110,7 +110,7 @@ CREATE TABLE `blog_post_tags` (
   KEY `tag_id` (`tag_id`),
   CONSTRAINT `blog_post_tags_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `blog_posts` (`id`) ON DELETE CASCADE,
   CONSTRAINT `blog_post_tags_ibfk_2` FOREIGN KEY (`tag_id`) REFERENCES `blog_tags` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -130,7 +130,7 @@ DROP TABLE IF EXISTS `blog_post_views`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `blog_post_views` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `post_id` varchar(36) NOT NULL,
   `ip_address` varchar(45) NOT NULL,
   `user_agent` text,
@@ -141,7 +141,7 @@ CREATE TABLE `blog_post_views` (
   KEY `idx_ip_address` (`ip_address`),
   KEY `idx_viewed_at` (`viewed_at`),
   CONSTRAINT `blog_post_views_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `blog_posts` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -161,7 +161,7 @@ DROP TABLE IF EXISTS `blog_posts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `blog_posts` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `title` varchar(255) NOT NULL,
   `slug` varchar(255) NOT NULL,
   `excerpt` text,
@@ -196,7 +196,7 @@ CREATE TABLE `blog_posts` (
   CONSTRAINT `blog_posts_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `blog_categories` (`id`) ON DELETE SET NULL,
   CONSTRAINT `blog_posts_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `blog_posts_ibfk_3` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -217,7 +217,7 @@ DROP TABLE IF EXISTS `blog_seo_settings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `blog_seo_settings` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `post_id` varchar(36) NOT NULL,
   `canonical_url` varchar(500) DEFAULT NULL,
   `og_title` varchar(255) DEFAULT NULL,
@@ -234,7 +234,7 @@ CREATE TABLE `blog_seo_settings` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `post_id` (`post_id`),
   CONSTRAINT `blog_seo_settings_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `blog_posts` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -254,7 +254,7 @@ DROP TABLE IF EXISTS `blog_tags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `blog_tags` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `name` varchar(50) NOT NULL,
   `slug` varchar(50) NOT NULL,
   `color` varchar(7) DEFAULT '#3B82F6',
@@ -264,7 +264,7 @@ CREATE TABLE `blog_tags` (
   UNIQUE KEY `slug` (`slug`),
   KEY `idx_slug` (`slug`),
   KEY `idx_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -285,7 +285,7 @@ DROP TABLE IF EXISTS `cart_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cart_items` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `user_id` varchar(36) NOT NULL,
   `product_id` varchar(36) NOT NULL,
   `quantity` int NOT NULL,
@@ -297,7 +297,7 @@ CREATE TABLE `cart_items` (
   KEY `idx_user` (`user_id`),
   CONSTRAINT `cart_items_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `cart_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -317,7 +317,7 @@ DROP TABLE IF EXISTS `categories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `categories` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `name` varchar(100) NOT NULL,
   `slug` varchar(255) NOT NULL,
   `sort_order` int DEFAULT '0',
@@ -334,7 +334,7 @@ CREATE TABLE `categories` (
   KEY `idx_active` (`is_active`),
   KEY `idx_sort_order` (`sort_order`),
   KEY `idx_parent` (`parent_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -355,7 +355,7 @@ DROP TABLE IF EXISTS `coupon_usage`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `coupon_usage` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `coupon_id` varchar(36) NOT NULL,
   `user_id` varchar(36) NOT NULL,
   `order_id` varchar(36) NOT NULL,
@@ -369,7 +369,7 @@ CREATE TABLE `coupon_usage` (
   CONSTRAINT `coupon_usage_ibfk_1` FOREIGN KEY (`coupon_id`) REFERENCES `coupons` (`id`) ON DELETE CASCADE,
   CONSTRAINT `coupon_usage_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `coupon_usage_ibfk_3` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -390,7 +390,7 @@ DROP TABLE IF EXISTS `coupons`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `coupons` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `code` varchar(50) NOT NULL,
   `name` varchar(200) NOT NULL,
   `description` text,
@@ -414,7 +414,7 @@ CREATE TABLE `coupons` (
   KEY `idx_coupons_active` (`is_active`),
   KEY `idx_coupons_dates` (`starts_at`,`expires_at`),
   CONSTRAINT `coupons_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -435,7 +435,7 @@ DROP TABLE IF EXISTS `faq_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `faq_items` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `question` text NOT NULL,
   `answer` longtext NOT NULL,
   `display_order` int DEFAULT '0',
@@ -455,7 +455,7 @@ CREATE TABLE `faq_items` (
   KEY `updated_by` (`updated_by`),
   CONSTRAINT `faq_items_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `faq_items_ibfk_3` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -476,7 +476,7 @@ DROP TABLE IF EXISTS `newsletter_campaign_recipients`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `newsletter_campaign_recipients` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `campaign_id` varchar(36) NOT NULL,
   `subscription_id` varchar(36) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -498,7 +498,7 @@ CREATE TABLE `newsletter_campaign_recipients` (
   KEY `idx_status` (`status`),
   CONSTRAINT `newsletter_campaign_recipients_ibfk_1` FOREIGN KEY (`campaign_id`) REFERENCES `newsletter_campaigns` (`id`) ON DELETE CASCADE,
   CONSTRAINT `newsletter_campaign_recipients_ibfk_2` FOREIGN KEY (`subscription_id`) REFERENCES `newsletter_subscriptions` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -518,7 +518,7 @@ DROP TABLE IF EXISTS `newsletter_campaigns`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `newsletter_campaigns` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `title` varchar(255) NOT NULL,
   `subject` varchar(255) NOT NULL,
   `content` text NOT NULL,
@@ -541,7 +541,7 @@ CREATE TABLE `newsletter_campaigns` (
   KEY `idx_scheduled_date` (`scheduled_date`),
   KEY `idx_created_by` (`created_by`),
   CONSTRAINT `newsletter_campaigns_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -561,7 +561,7 @@ DROP TABLE IF EXISTS `newsletter_subscription_history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `newsletter_subscription_history` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `subscription_id` varchar(36) NOT NULL,
   `email` varchar(255) NOT NULL,
   `action` enum('subscribed','unsubscribed','resubscribed','bounced','spam_complaint') NOT NULL,
@@ -575,7 +575,7 @@ CREATE TABLE `newsletter_subscription_history` (
   KEY `idx_action` (`action`),
   KEY `idx_created_at` (`created_at`),
   CONSTRAINT `newsletter_subscription_history_ibfk_1` FOREIGN KEY (`subscription_id`) REFERENCES `newsletter_subscriptions` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -596,7 +596,7 @@ DROP TABLE IF EXISTS `newsletter_subscriptions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `newsletter_subscriptions` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `email` varchar(255) NOT NULL,
   `first_name` varchar(100) DEFAULT NULL,
   `last_name` varchar(100) DEFAULT NULL,
@@ -617,7 +617,7 @@ CREATE TABLE `newsletter_subscriptions` (
   KEY `idx_status` (`status`),
   KEY `idx_subscription_date` (`subscription_date`),
   KEY `idx_confirmed_at` (`confirmed_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -638,7 +638,7 @@ DROP TABLE IF EXISTS `newsletter_templates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `newsletter_templates` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` text,
   `html_content` longtext NOT NULL,
@@ -651,7 +651,7 @@ CREATE TABLE `newsletter_templates` (
   KEY `idx_is_default` (`is_default`),
   KEY `created_by` (`created_by`),
   CONSTRAINT `newsletter_templates_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -671,7 +671,7 @@ DROP TABLE IF EXISTS `order_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `order_items` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `order_id` varchar(36) NOT NULL,
   `product_id` varchar(36) NOT NULL,
   `quantity` int NOT NULL,
@@ -685,7 +685,7 @@ CREATE TABLE `order_items` (
   KEY `idx_order_items_variation_id` (`variation_id`),
   CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
   CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -706,7 +706,7 @@ DROP TABLE IF EXISTS `order_status_history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `order_status_history` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `order_id` varchar(36) NOT NULL,
   `status` enum('pending','confirmed','processing','shipped','delivered','cancelled','refunded') NOT NULL,
   `notes` text,
@@ -719,7 +719,7 @@ CREATE TABLE `order_status_history` (
   KEY `idx_created_at` (`created_at`),
   CONSTRAINT `order_status_history_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
   CONSTRAINT `order_status_history_ibfk_2` FOREIGN KEY (`changed_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -740,7 +740,7 @@ DROP TABLE IF EXISTS `orders`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `orders` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `user_id` varchar(36) NOT NULL,
   `coupon_id` varchar(36) DEFAULT NULL,
   `coupon_code` varchar(50) DEFAULT NULL,
@@ -771,7 +771,7 @@ CREATE TABLE `orders` (
   CONSTRAINT `fk_orders_shipping_zone` FOREIGN KEY (`shipping_zone_id`) REFERENCES `shipping_zones` (`id`) ON DELETE SET NULL,
   CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`coupon_id`) REFERENCES `coupons` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -792,7 +792,7 @@ DROP TABLE IF EXISTS `page_versions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `page_versions` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `page_id` varchar(36) NOT NULL,
   `version_number` int NOT NULL,
   `title` varchar(255) NOT NULL,
@@ -811,7 +811,7 @@ CREATE TABLE `page_versions` (
   KEY `created_by` (`created_by`),
   CONSTRAINT `page_versions_ibfk_1` FOREIGN KEY (`page_id`) REFERENCES `website_pages` (`id`) ON DELETE CASCADE,
   CONSTRAINT `page_versions_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -832,7 +832,7 @@ DROP TABLE IF EXISTS `product_variation_combinations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `product_variation_combinations` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `product_variation_id` varchar(36) NOT NULL,
   `variation_option_id` int NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -841,7 +841,7 @@ CREATE TABLE `product_variation_combinations` (
   KEY `variation_option_id` (`variation_option_id`),
   CONSTRAINT `product_variation_combinations_ibfk_1` FOREIGN KEY (`product_variation_id`) REFERENCES `product_variations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `product_variation_combinations_ibfk_2` FOREIGN KEY (`variation_option_id`) REFERENCES `product_variation_options` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -875,7 +875,7 @@ CREATE TABLE `product_variation_options` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_option_per_type` (`variation_type_id`,`slug`),
   CONSTRAINT `product_variation_options_ibfk_1` FOREIGN KEY (`variation_type_id`) REFERENCES `product_variation_types` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -908,7 +908,7 @@ CREATE TABLE `product_variation_types` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `slug` (`slug`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -929,7 +929,7 @@ DROP TABLE IF EXISTS `product_variations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `product_variations` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `product_id` varchar(36) NOT NULL,
   `sku` varchar(100) NOT NULL,
   `price` decimal(10,2) NOT NULL DEFAULT '0.00',
@@ -948,7 +948,7 @@ CREATE TABLE `product_variations` (
   KEY `idx_product_variations_product` (`product_id`),
   KEY `idx_product_variations_sku` (`sku`),
   CONSTRAINT `product_variations_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -969,7 +969,7 @@ DROP TABLE IF EXISTS `products`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `products` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `name` varchar(255) NOT NULL,
   `slug` varchar(255) DEFAULT NULL,
   `description` text,
@@ -1006,7 +1006,7 @@ CREATE TABLE `products` (
   KEY `idx_stock_status` (`stock_status`),
   KEY `idx_slug` (`slug`),
   CONSTRAINT `products_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1027,7 +1027,7 @@ DROP TABLE IF EXISTS `reviews`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `reviews` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `product_id` varchar(36) NOT NULL,
   `user_id` varchar(36) NOT NULL,
   `rating` int NOT NULL,
@@ -1042,7 +1042,7 @@ CREATE TABLE `reviews` (
   CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
   CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `reviews_chk_1` CHECK (((`rating` >= 1) and (`rating` <= 5)))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1062,7 +1062,7 @@ DROP TABLE IF EXISTS `shipping_zones`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `shipping_zones` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `name` varchar(100) NOT NULL,
   `description` text,
   `price` decimal(10,2) NOT NULL DEFAULT '0.00',
@@ -1074,7 +1074,7 @@ CREATE TABLE `shipping_zones` (
   KEY `idx_name` (`name`),
   KEY `idx_active` (`is_active`),
   KEY `idx_price` (`price`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1095,7 +1095,7 @@ DROP TABLE IF EXISTS `system_settings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `system_settings` (
-  `id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
   `setting_key` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `setting_value` text COLLATE utf8mb4_unicode_ci,
   `description` text COLLATE utf8mb4_unicode_ci,
@@ -1129,7 +1129,7 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `first_name` varchar(100) NOT NULL,
@@ -1150,7 +1150,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `email` (`email`),
   KEY `idx_email` (`email`),
   KEY `idx_role` (`role`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1171,7 +1171,7 @@ DROP TABLE IF EXISTS `website_pages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `website_pages` (
-  `id` varchar(36) NOT NULL DEFAULT (uuid()),
+  `id` varchar(36) NOT NULL,
   `title` varchar(255) NOT NULL,
   `slug` varchar(255) NOT NULL,
   `page_type` enum('faq','privacy_policy','terms_of_service','about_us','contact','shipping_policy','return_policy','custom') NOT NULL DEFAULT 'custom',
@@ -1198,7 +1198,7 @@ CREATE TABLE `website_pages` (
   KEY `updated_by` (`updated_by`),
   CONSTRAINT `website_pages_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `website_pages_ibfk_2` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

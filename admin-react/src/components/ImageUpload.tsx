@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import Image from 'next/image';
+// import Image from 'next/image'; // Disabled for shared hosting compatibility
 import toast from 'react-hot-toast';
 import env from '@/config/env';
-import { getProxiedImageUrl } from '@/utils/imageProxy';
+// import { getProxiedImageUrl } from '@/utils/imageProxy'; // Disabled for shared hosting compatibility
 
 interface ImageUploadProps {
   currentImage?: string;
@@ -77,11 +77,11 @@ export default function ImageUpload({
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
       // Choose endpoint based on upload type
-      let endpoint = `${env.API_URL}/api/upload/product-image`; // default
+      let endpoint = `${env.API_BASE_URL}/upload/product-image`; // default
       if (uploadType === 'category') {
-        endpoint = `${env.API_URL}/api/upload/category-image`;
+        endpoint = `${env.API_BASE_URL}/upload/category-image`;
       } else if (uploadType === 'blog') {
-        endpoint = `${env.API_URL}/api/upload/blog-image`;
+        endpoint = `${env.API_BASE_URL}/upload/blog-image`;
       }
 
       const response = await fetch(endpoint, {
@@ -160,12 +160,10 @@ export default function ImageUpload({
           </div>
         ) : preview ? (
           <div className="relative">
-            <Image
-              src={preview.startsWith('data:') ? preview : getProxiedImageUrl(preview)}
+            <img
+              src={preview.startsWith('data:') ? preview : preview}
               alt="Preview"
-              width={200}
-              height={200}
-              className="max-w-full max-h-48 mx-auto rounded-lg object-cover"
+              className="max-w-full max-h-48 w-[200px] h-[200px] mx-auto rounded-lg object-cover"
             />
             <button
               type="button"

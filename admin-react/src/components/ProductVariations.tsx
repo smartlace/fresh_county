@@ -59,7 +59,7 @@ export default function ProductVariations({ productId, onClose }: ProductVariati
     selected_options: {} as { [typeId: number]: number }
   });
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://freshcounty.com/api';
 
   useEffect(() => {
     loadVariationTypes();
@@ -69,7 +69,7 @@ export default function ProductVariations({ productId, onClose }: ProductVariati
   const loadVariationTypes = async () => {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
-      const response = await fetch(`${API_BASE_URL}/api/product-variations/types`, {
+      const response = await fetch(`${API_BASE_URL}/product-variations/types`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -94,7 +94,7 @@ export default function ProductVariations({ productId, onClose }: ProductVariati
   const loadVariationOptions = async (typeId: number) => {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
-      const response = await fetch(`${API_BASE_URL}/api/product-variations/types/${typeId}/options`, {
+      const response = await fetch(`${API_BASE_URL}/product-variations/types/${typeId}/options`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -117,7 +117,7 @@ export default function ProductVariations({ productId, onClose }: ProductVariati
     setLoading(true);
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
-      const response = await fetch(`${API_BASE_URL}/api/product-variations/products/${productId}`, {
+      const response = await fetch(`${API_BASE_URL}/product-variations/products/${productId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -159,8 +159,8 @@ export default function ProductVariations({ productId, onClose }: ProductVariati
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       const url = editingVariation 
-        ? `${API_BASE_URL}/api/product-variations/variations/${editingVariation.id}`
-        : `${API_BASE_URL}/api/product-variations/products/${productId}/variations`;
+        ? `${API_BASE_URL}/product-variations/variations/${editingVariation.id}`
+        : `${API_BASE_URL}/product-variations/products/${productId}/variations`;
       
       const response = await fetch(url, {
         method: editingVariation ? 'PUT' : 'POST',
@@ -216,7 +216,7 @@ export default function ProductVariations({ productId, onClose }: ProductVariati
 
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
-      const response = await fetch(`${API_BASE_URL}/api/product-variations/variations/${variationId}`, {
+      const response = await fetch(`${API_BASE_URL}/product-variations/variations/${variationId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -26,7 +26,7 @@ export default function Settings() {
   const [saving, setSaving] = useState(false);
   const [mfaStatus, setMFAStatus] = useState<MFAStatus>({ mfaEnabled: false });
   const [showMFASetup, setShowMFASetup] = useState(false);
-  const [mfaSetupData, setMFASetupData] = useState<{ qr_code: string; secret: string } | null>(null);
+  const [mfaSetupData, setMFASetupData] = useState<{ secret: string; qrCodeUrl: string; backupCodes: string[] } | null>(null);
   const [mfaToken, setMFAToken] = useState('');
   const [password, setPassword] = useState('');
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
@@ -34,7 +34,7 @@ export default function Settings() {
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [showSmtpPassword, setShowSmtpPassword] = useState(false);
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://freshcounty.com/api';
 
   // Default settings structure
   const defaultSettings: Setting[] = [
@@ -82,7 +82,7 @@ export default function Settings() {
       setLoading(true);
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/settings`, {
+      const response = await fetch(`${API_BASE_URL}/admin/settings`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -157,7 +157,7 @@ export default function Settings() {
         return acc;
       }, {} as Record<string, string>);
 
-      const response = await fetch(`${API_BASE_URL}/api/admin/settings`, {
+      const response = await fetch(`${API_BASE_URL}/admin/settings`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -234,7 +234,7 @@ export default function Settings() {
         // Save defaults to database
         const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
         
-        const response = await fetch(`${API_BASE_URL}/api/admin/settings`, {
+        const response = await fetch(`${API_BASE_URL}/admin/settings`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,

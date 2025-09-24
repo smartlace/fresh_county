@@ -37,7 +37,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_BASE_URL = env.API_URL;
+const API_BASE_URL = env.API_BASE_URL;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+      const response = await fetch(`${API_BASE_URL}/auth/profile`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -89,7 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/admin-login`, {
+      const response = await fetch(`${API_BASE_URL}/auth/admin-login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -134,7 +134,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loginWithMFA = async (mfaToken: string, mfaLoginToken: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/admin-login`, {
+      const response = await fetch(`${API_BASE_URL}/auth/admin-login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -169,7 +169,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const token = getToken();
       if (token) {
-        await fetch(`${API_BASE_URL}/api/auth/enhanced-logout`, {
+        await fetch(`${API_BASE_URL}/auth/enhanced-logout`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -191,7 +191,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const setupMFA = async () => {
     try {
       const token = getToken();
-      const response = await fetch(`${API_BASE_URL}/api/auth/mfa/setup`, {
+      const response = await fetch(`${API_BASE_URL}/auth/mfa/setup`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -217,7 +217,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const confirmMFA = async (token: string) => {
     try {
       const authToken = getToken();
-      const response = await fetch(`${API_BASE_URL}/api/auth/mfa/confirm`, {
+      const response = await fetch(`${API_BASE_URL}/auth/mfa/confirm`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${authToken}`,
@@ -244,7 +244,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const disableMFA = async (password: string, mfaToken: string) => {
     try {
       const authToken = getToken();
-      const response = await fetch(`${API_BASE_URL}/api/auth/mfa/disable`, {
+      const response = await fetch(`${API_BASE_URL}/auth/mfa/disable`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${authToken}`,
@@ -271,7 +271,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const generateBackupCodes = async (password: string, mfaToken: string) => {
     try {
       const authToken = getToken();
-      const response = await fetch(`${API_BASE_URL}/api/auth/mfa/backup-codes`, {
+      const response = await fetch(`${API_BASE_URL}/auth/mfa/backup-codes`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${authToken}`,
@@ -299,7 +299,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const getMFAStatus = async () => {
     try {
       const token = getToken();
-      const response = await fetch(`${API_BASE_URL}/api/auth/mfa/status`, {
+      const response = await fetch(`${API_BASE_URL}/auth/mfa/status`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

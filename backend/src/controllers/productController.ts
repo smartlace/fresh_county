@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
+import { v4 as uuidv4 } from 'uuid';
 import pool from '../config/database';
 import { ApiResponse, PaginatedResponse, Product } from '../types';
 import { CustomError } from '../middleware/errorHandler';
@@ -350,7 +351,10 @@ export const getProduct = async (req: Request, res: Response, next: NextFunction
     const response: ApiResponse = {
       success: true,
       message: 'Product retrieved successfully',
-      data: product
+      data: {
+        ...product,
+        related_products: relatedProducts
+      }
     };
 
     res.status(200).json(response);
@@ -420,15 +424,19 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
       stockStatus = 'low_stock';
     }
 
+    // Generate UUID for the product
+    const productId = uuidv4();
+
     // Insert product - use only columns that exist in the database
     // Convert undefined values to null for MySQL compatibility
-    const [result] = await pool.execute(`
+    await pool.execute(`
       INSERT INTO products (
-        name, slug, description, short_description, sku, price, sale_price,
+        id, name, slug, description, short_description, sku, price, sale_price,
         stock_quantity, stock_status, category_id, featured_image, images,
         status, featured, meta_title, meta_description
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
+      productId,
       name, 
       finalSlug, 
       description || null, 
@@ -447,9 +455,7 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
       meta_description || null
     ]) as any;
 
-    const productId = result.insertId;
-
-    // Get the created product
+    // Get the created product (use the generated UUID, not insertId)
     const [createdProduct] = await pool.execute(
       'SELECT * FROM products WHERE id = ?',
       [productId]

@@ -81,7 +81,7 @@ export default function NewslettersPage() {
       if (searchTerm) params.append('search', searchTerm);
       if (statusFilter) params.append('status', statusFilter);
 
-      const response = await fetch(`${API_BASE_URL}/api/newsletters?${params}`, {
+      const response = await fetch(`${API_BASE_URL}/newsletters?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -112,7 +112,7 @@ export default function NewslettersPage() {
       const token = localStorage.getItem('admin_token');
       if (!token) return;
 
-      const response = await fetch(`${API_BASE_URL}/api/newsletters/stats`, {
+      const response = await fetch(`${API_BASE_URL}/newsletters/stats`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -140,7 +140,7 @@ export default function NewslettersPage() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/newsletters`, {
+      const response = await fetch(`${API_BASE_URL}/newsletters`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -182,7 +182,7 @@ export default function NewslettersPage() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/newsletters/${selectedSubscription.id}`, {
+      const response = await fetch(`${API_BASE_URL}/newsletters/${selectedSubscription.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -220,7 +220,7 @@ export default function NewslettersPage() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/newsletters/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/newsletters/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -256,7 +256,7 @@ export default function NewslettersPage() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/newsletters/bulk-status`, {
+      const response = await fetch(`${API_BASE_URL}/newsletters/bulk-status`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -299,7 +299,7 @@ export default function NewslettersPage() {
       if (searchTerm) params.append('search', searchTerm);
       if (statusFilter) params.append('status', statusFilter);
 
-      const response = await fetch(`${API_BASE_URL}/api/newsletters/export?${params}`, {
+      const response = await fetch(`${API_BASE_URL}/newsletters/export?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         },

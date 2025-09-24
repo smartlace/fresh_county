@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
+import { v4 as uuidv4 } from 'uuid';
 import pool from '../config/database';
 import { ApiResponse, PaginatedResponse } from '../types';
 import { CustomError } from '../middleware/errorHandler';
@@ -390,12 +391,14 @@ export const createProductVariation = async (req: Request, res: Response, next: 
     }
 
     // Create the variation
+    const variationId = uuidv4();
     const [variationResult] = await connection.execute(`
       INSERT INTO product_variations (
-        product_id, sku, price, sale_price, stock_quantity, stock_status,
+        id, product_id, sku, price, sale_price, stock_quantity, stock_status,
         weight, dimensions, images, is_default
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
+      variationId,
       product_id,
       generatedSKU,
       price,
@@ -408,13 +411,13 @@ export const createProductVariation = async (req: Request, res: Response, next: 
       is_default
     ]) as any;
 
-    // Get the actual UUID that was generated
-    const [insertedVariation] = await connection.execute(
-      'SELECT id FROM product_variations WHERE sku = ?',
-      [generatedSKU]
-    ) as any[];
+    // Use the generated UUID (no need to query database)
+    // const [insertedVariation] = await connection.execute(
+    //   'SELECT id FROM product_variations WHERE sku = ?',
+    //   [generatedSKU]
+    // ) as any[];
     
-    const variationId = insertedVariation[0].id;
+    // const variationId = insertedVariation[0].id; // Use the generated UUID instead
 
     // Create variation combinations
     for (const optionId of variation_options) {
@@ -857,11 +860,13 @@ export const createProductWithVariations = async (req: Request, res: Response, n
         }
 
         // Create product variation
+        const variationId2 = uuidv4();
         const [variationResult] = await connection.execute(`
           INSERT INTO product_variations (
-            product_id, sku, price, sale_price, stock_quantity, stock_status, is_default
-          ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            id, product_id, sku, price, sale_price, stock_quantity, stock_status, is_default
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `, [
+          variationId2,
           productId,
           variationSKU,
           parseFloat(varPrice),
@@ -871,18 +876,18 @@ export const createProductWithVariations = async (req: Request, res: Response, n
           i === 0 // First variation is default
         ]) as any;
 
-        // Get the actual UUID that was generated
-        const [insertedVariation] = await connection.execute(
-          'SELECT id FROM product_variations WHERE sku = ?',
-          [variationSKU]
-        ) as any[];
+        // Use the generated UUID (no need to query database)
+        // const [insertedVariation] = await connection.execute(
+        //   'SELECT id FROM product_variations WHERE sku = ?',
+        //   [variationSKU]
+        // ) as any[];
         
-        const variationId = insertedVariation[0].id;
+        // Use variationId2 that was generated above
 
         // Create variation combination
         await connection.execute(
           'INSERT INTO product_variation_combinations (product_variation_id, variation_option_id) VALUES (?, ?)',
-          [variationId, variationOptionId]
+          [variationId2, variationOptionId]
         );
       }
     }
@@ -1106,11 +1111,13 @@ export const updateProductWithVariations = async (req: Request, res: Response, n
         }
 
         // Create product variation
+        const variationId3 = uuidv4();
         const [variationResult] = await connection.execute(`
           INSERT INTO product_variations (
-            product_id, sku, price, sale_price, stock_quantity, stock_status, is_default
-          ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            id, product_id, sku, price, sale_price, stock_quantity, stock_status, is_default
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `, [
+          variationId3,
           productId,
           variationSKU,
           parseFloat(varPrice),
@@ -1120,18 +1127,18 @@ export const updateProductWithVariations = async (req: Request, res: Response, n
           i === 0 // First variation is default
         ]) as any;
 
-        // Get the actual UUID that was generated
-        const [insertedVariation] = await connection.execute(
-          'SELECT id FROM product_variations WHERE sku = ?',
-          [variationSKU]
-        ) as any[];
+        // Use the generated UUID (no need to query database)
+        // const [insertedVariation] = await connection.execute(
+        //   'SELECT id FROM product_variations WHERE sku = ?',
+        //   [variationSKU]
+        // ) as any[];
         
-        const variationId = insertedVariation[0].id;
+        // Use variationId3 that was generated above
 
         // Create variation combination
         await connection.execute(
           'INSERT INTO product_variation_combinations (product_variation_id, variation_option_id) VALUES (?, ?)',
-          [variationId, variationOptionId]
+          [variationId3, variationOptionId]
         );
       }
     } else {

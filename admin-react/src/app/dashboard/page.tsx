@@ -90,7 +90,7 @@ export default function Dashboard() {
       setLoading(true);
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${env.API_URL}/api/admin/dashboard?period=${dateRange}`, {
+      const response = await fetch(`${env.API_BASE_URL}/admin/dashboard?period=${dateRange}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

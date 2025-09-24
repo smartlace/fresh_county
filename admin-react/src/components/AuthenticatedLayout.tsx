@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSettings } from '@/contexts/SettingsContext';
 import Navigation from './Navigation';
 
 interface AuthenticatedLayoutProps {
@@ -11,6 +12,7 @@ interface AuthenticatedLayoutProps {
 
 export default function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
   const { isLoading, isAuthenticated } = useAuth();
+  const { refreshSettings } = useSettings();
   const router = useRouter();
 
   // Redirect to login when not authenticated
@@ -20,6 +22,13 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
       router.replace('/login');
     }
   }, [isLoading, isAuthenticated, router]);
+
+  // Load settings once user is authenticated
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      refreshSettings();
+    }
+  }, [isLoading, isAuthenticated, refreshSettings]);
 
   if (isLoading) {
     return (

@@ -2,8 +2,8 @@
 
 export const env = {
   // API Configuration  
-  API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
-  API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api',
+  API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://freshcounty.com/api',
+  API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://freshcounty.com/api',
   
   // Application Configuration
   APP_NAME: process.env.NEXT_PUBLIC_APP_NAME || 'Fresh County Admin',

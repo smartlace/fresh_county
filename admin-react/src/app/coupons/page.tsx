@@ -54,7 +54,7 @@ export default function Coupons() {
     is_active: true
   });
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://freshcounty.com/api';
 
   // Helper function to ensure proper ISO date format
   const formatDateForSubmission = (dateValue: string) => {
@@ -79,7 +79,7 @@ export default function Coupons() {
       if (filterType) params.append('type', filterType);
       if (filterActive) params.append('is_active', filterActive);
 
-      const response = await fetch(`${API_BASE_URL}/api/coupons?${params}`, {
+      const response = await fetch(`${API_BASE_URL}/coupons?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -135,7 +135,7 @@ export default function Coupons() {
         expires_at: formatDateForSubmission(formData.expires_at)
       };
 
-      const response = await fetch(`${API_BASE_URL}/api/coupons`, {
+      const response = await fetch(`${API_BASE_URL}/coupons`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -190,7 +190,7 @@ export default function Coupons() {
         expires_at: formatDateForSubmission(formData.expires_at)
       };
 
-      const response = await fetch(`${API_BASE_URL}/api/coupons/${selectedCoupon.id}`, {
+      const response = await fetch(`${API_BASE_URL}/coupons/${selectedCoupon.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -225,7 +225,7 @@ export default function Coupons() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
 
-      const response = await fetch(`${API_BASE_URL}/api/coupons/${couponId}`, {
+      const response = await fetch(`${API_BASE_URL}/coupons/${couponId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

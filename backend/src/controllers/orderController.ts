@@ -496,6 +496,8 @@ export const getOrder = async (req: Request, res: Response, next: NextFunction) 
     const [orders] = await pool.execute(`
       SELECT 
         o.*,
+        o.order_status as status,
+        COALESCE(o.payment_reference, CONCAT('FC-', LEFT(o.id, 8))) as order_number,
         u.email as user_email,
         u.first_name,
         u.last_name,
@@ -511,16 +513,19 @@ export const getOrder = async (req: Request, res: Response, next: NextFunction) 
       return next(error);
     }
 
-    // Get order items
+    // Get order items with variation details
     const [orderItems] = await pool.execute(`
       SELECT 
         oi.*,
         p.name as product_name,
         p.slug as product_slug,
         p.featured_image as product_image,
-        p.sku as product_sku
+        p.sku as product_sku,
+        pv.sku as variation_sku,
+        pv.dimensions as variation_dimensions
       FROM order_items oi
       JOIN products p ON oi.product_id = p.id
+      LEFT JOIN product_variations pv ON oi.variation_id = pv.id
       WHERE oi.order_id = ?
       ORDER BY oi.id ASC
     `, [id]) as any[];
@@ -557,10 +562,37 @@ export const getOrder = async (req: Request, res: Response, next: NextFunction) 
 
     const order = {
       ...orders[0],
-      items: orderItems.map((item: any) => ({
-        ...item,
-        attributes: item.attributes ? JSON.parse(item.attributes) : {}
-      })),
+      items: orderItems.map((item: any) => {
+        // Process variation dimensions if available
+        let parsedDimensions: any = {};
+        if (item.variation_dimensions) {
+          try {
+            parsedDimensions = JSON.parse(item.variation_dimensions);
+          } catch (e) {
+            console.error('Error parsing variation dimensions:', e);
+            parsedDimensions = {};
+          }
+        }
+
+        // Build variation display name from available data
+        let variationDisplayName = item.variation_name;
+        if (!variationDisplayName && parsedDimensions && Object.keys(parsedDimensions).length > 0) {
+          const dimensionParts = [];
+          if (parsedDimensions.size) dimensionParts.push(`Size: ${parsedDimensions.size}`);
+          if (parsedDimensions.color) dimensionParts.push(`Color: ${parsedDimensions.color}`);
+          if (parsedDimensions.material) dimensionParts.push(`Material: ${parsedDimensions.material}`);
+          if (dimensionParts.length > 0) {
+            variationDisplayName = dimensionParts.join(', ');
+          }
+        }
+
+        return {
+          ...item,
+          variation_name: variationDisplayName,
+          attributes: item.attributes ? JSON.parse(item.attributes) : {},
+          variation_details: parsedDimensions
+        };
+      }),
       shipping_address: parsedShippingAddress,
       billing_address: parsedShippingAddress, // Use shipping address as billing address
       status_history: statusHistory

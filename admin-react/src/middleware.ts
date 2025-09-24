@@ -79,9 +79,9 @@ export function middleware(request: NextRequest) {
     "default-src 'self'; " +
     "script-src 'self' 'unsafe-eval' 'unsafe-inline'; " +
     "style-src 'self' 'unsafe-inline'; " +
-    "img-src 'self' data: blob:; " +
+    "img-src 'self' data: blob: https://freshcounty.com; " +
     "font-src 'self'; " +
-    "connect-src 'self' http://localhost:3001; " +
+    "connect-src 'self' https://freshcounty.com; " +
     "frame-ancestors 'none';"
   );
   
@@ -90,7 +90,8 @@ export function middleware(request: NextRequest) {
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  response.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
+  // Commented out COEP to allow uploads from same domain
+  // response.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
   response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
   
   return response;

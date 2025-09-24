@@ -8,8 +8,9 @@ import cookieParser from 'cookie-parser';
 import { connectDatabase } from './config/database';
 import { connectRedis } from './config/redis';
 import { errorHandler } from './middleware/errorHandler';
-import { rateLimiter } from './middleware/rateLimiter';
+import { adminLimiter, adminDashboardLimiter, uploadLimiter, newsletterLimiter, contactLimiter } from './middleware/rateLimiter';
 import { requireAdminAuth, requireAdminAuthAPI } from './middleware/adminAuth';
+import { Permission, requirePermission } from './middleware/rbac';
 
 // Routes
 import authRoutes from './routes/auth';
@@ -37,12 +38,16 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust proxy for shared hosting environments (Namecheap, etc.)
+// Use 1 to trust the first proxy (load balancer/reverse proxy)
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "blob:", "http://localhost:3001"], // Allow images from backend server
+      imgSrc: ["'self'", "data:", "blob:", process.env.BACKEND_URL || "http://localhost:3001", process.env.FRONTEND_URL || "http://localhost:3000"], // Allow images from backend server and frontend domain
       styleSrc: ["'self'", "https:", "'unsafe-inline'"],
       scriptSrc: ["'self'"],
       objectSrc: ["'none'"],
@@ -53,7 +58,7 @@ app.use(helmet({
 app.use(cors({
   origin: [
     process.env.FRONTEND_URL || 'http://localhost:3000',
-    'http://localhost:3002' // Admin panel
+    process.env.ADMIN_URL || 'http://localhost:3002'
   ],
   credentials: true
 }));
@@ -61,10 +66,11 @@ app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(rateLimiter);
+// Note: Rate limiting is now applied selectively to specific routes only
 
-// Static file serving for uploads
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+// Static file serving for uploads - use same path as upload middleware
+const uploadsPath = process.env.UPLOAD_PATH || path.join(__dirname, '../uploads');
+app.use('/uploads', express.static(uploadsPath));
 
 // Health check
 app.get('/health', (req: express.Request, res: express.Response) => {
@@ -77,8 +83,15 @@ app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
-app.use('/api/admin', requireAdminAuthAPI, adminRoutes);
-app.use('/api/upload', uploadRoutes);
+// Admin dashboard routes (lenient rate limiting for frequent polling)
+app.use('/api/admin/settings', adminDashboardLimiter, requireAdminAuthAPI, adminRoutes);
+app.use('/api/admin/dashboard', adminDashboardLimiter, requireAdminAuthAPI, adminRoutes);
+app.use('/api/admin/analytics', adminDashboardLimiter, requireAdminAuthAPI, adminRoutes);
+app.use('/api/admin/orders/stats', adminDashboardLimiter, requireAdminAuthAPI, adminRoutes);
+app.use('/api/admin/users/stats', adminDashboardLimiter, requireAdminAuthAPI, adminRoutes);
+// All other admin routes (standard rate limiting)
+app.use('/api/admin', adminLimiter, requireAdminAuthAPI, adminRoutes);
+app.use('/api/upload', uploadLimiter, uploadRoutes);
 // Public coupon validation (requires user auth, not admin)
 app.use('/api/coupon', publicCouponRoutes);
 // Public settings (bank details for payment modal - no auth required)
@@ -86,7 +99,7 @@ app.use('/api/settings', publicSettingsRoutes);
 // Public settings for under construction check (no auth required)
 app.use('/api/settings/public', settingsPublicRoutes);
 // Public newsletter subscription (no auth required)
-app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/newsletter', newsletterLimiter, newsletterRoutes);
 // Public FAQ endpoint (no auth required)
 app.use('/api/faqs', websitePagesRoutes);
 // Public website pages (no auth required for public endpoints)
@@ -101,9 +114,9 @@ app.use('/api/admin/blog', requireAdminAuthAPI, blogRoutes);
 app.use('/api/product-variations', requireAdminAuthAPI, productVariationRoutes);
 // Shipping zones routes
 app.use('/api/shipping-zones', publicShippingZonesRoutes); // Public route for frontend
-app.use('/api/admin/shipping-zones', requireAdminAuthAPI, shippingZonesRoutes); // Admin routes
+app.use('/api/admin/shipping-zones', requirePermission(Permission.VIEW_SHIPPING_ZONES), shippingZonesRoutes); // Manager/Admin routes
 // Contact form routes (no auth required)
-app.use('/api/contact', contactRoutes);
+app.use('/api/contact', contactLimiter, contactRoutes);
 app.use('/api/test-email', testEmailRoutes);
 
 // Legacy HTML admin routes removed - now using React admin at port 3002
@@ -128,10 +141,15 @@ app.use('*', (req: express.Request, res: express.Response) => {
 const startServer = async () => {
   try {
     await connectDatabase();
-    await connectRedis();
+    const redisConnected = await connectRedis();
+    
+    if (!redisConnected) {
+      console.warn('Server starting without Redis - some caching features may be limited');
+    }
     
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
+      console.log(`Health check: http://localhost:${PORT}/health`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);

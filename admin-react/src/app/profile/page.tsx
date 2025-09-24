@@ -70,7 +70,7 @@ export default function ProfilePage() {
   // Fetch latest user profile data
   const fetchUserProfile = async () => {
     try {
-      const response = await fetch(`${env.API_URL}/api/auth/profile`, {
+      const response = await fetch(`${env.API_BASE_URL}/auth/profile`, {
         headers: getAuthHeaders()
       });
       
@@ -140,7 +140,7 @@ export default function ProfilePage() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${env.API_URL}/api/admin/users/${user?.id}`, {
+      const response = await fetch(`${env.API_BASE_URL}/admin/users/${user?.id}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
         body: JSON.stringify({
@@ -160,7 +160,8 @@ export default function ProfilePage() {
       // Refresh user data to show updated information
       await fetchUserProfile();
     } catch (err: unknown) {
-      toast.error(err.message || 'Failed to update profile');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update profile';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -182,7 +183,7 @@ export default function ProfilePage() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${env.API_URL}/api/auth/change-password`, {
+      const response = await fetch(`${env.API_BASE_URL}/auth/change-password`, {
         method: 'PUT',
         headers: getAuthHeaders(),
         body: JSON.stringify({
@@ -203,7 +204,8 @@ export default function ProfilePage() {
         confirm_password: ''
       });
     } catch (err: unknown) {
-      toast.error(err.message || 'Failed to change password');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to change password';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

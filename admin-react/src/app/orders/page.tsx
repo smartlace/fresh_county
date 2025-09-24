@@ -101,7 +101,7 @@ export default function Orders() {
   const [currentPage, setCurrentPage] = useState(1);
   const [confirmingPayment, setConfirmingPayment] = useState<string | null>(null);
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://freshcounty.com/api';
 
   // Helper function to get image URL - uses proxy to avoid CSP issues
   const getImageUrl = (imageUrl: string | null | undefined): string => {
@@ -137,7 +137,7 @@ export default function Orders() {
       setLoading(true);
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      let url = `${API_BASE_URL}/api/admin/orders?page=${currentPage}&limit=20`;
+      let url = `${API_BASE_URL}/admin/orders?page=${currentPage}&limit=20`;
       if (statusFilter) url += `&status=${statusFilter}`;
       if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
 
@@ -170,7 +170,7 @@ export default function Orders() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/orders/stats`, {
+      const response = await fetch(`${API_BASE_URL}/admin/orders/stats`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -204,7 +204,7 @@ export default function Orders() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/orders/${orderId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -230,7 +230,7 @@ export default function Orders() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/orders/${orderId}/status`, {
+      const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}/status`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -260,7 +260,7 @@ export default function Orders() {
       setConfirmingPayment(orderId);
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/orders/${orderId}/confirm-payment`, {
+      const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}/confirm-payment`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

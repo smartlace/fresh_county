@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     // Allow localhost:3001 URLs and trusted external image sources
     const allowedDomains = [
-      'http://localhost:3001/',
+      'https://freshcounty.com/api/',
       'https://images.unsplash.com/',
       'https://unsplash.com/',
       'https://via.placeholder.com/'

@@ -100,7 +100,7 @@ export default function WebsitePages() {
     meta_title: '',
     meta_description: '',
     meta_keywords: '',
-    status: 'draft' as const,
+    status: 'draft' as 'draft' | 'published' | 'archived',
     is_featured: false,
     display_order: 0,
     template: 'default'
@@ -135,7 +135,7 @@ export default function WebsitePages() {
       let faqData = { data: [] };
 
       try {
-        const pagesRes = await fetch(`${env.API_URL}/api/admin/website-pages?${params}`, {
+        const pagesRes = await fetch(`${env.API_BASE_URL}/admin/website-pages?${params}`, {
           headers: getAuthHeaders(),
           credentials: 'include'
         });
@@ -149,7 +149,7 @@ export default function WebsitePages() {
       }
 
       try {
-        const faqRes = await fetch(`${env.API_URL}/api/admin/website-pages/faq`, {
+        const faqRes = await fetch(`${env.API_BASE_URL}/admin/website-pages/faq`, {
           headers: getAuthHeaders(),
           credentials: 'include'
         });
@@ -178,22 +178,23 @@ export default function WebsitePages() {
 
   const openModal = (type: 'page' | 'faq-item', item?: WebsitePage | FAQItem) => {
     setModalType(type);
-    setEditingItem(item);
+    setEditingItem(item || null);
     
     if (type === 'page') {
-      if (item) {
+      if (item && 'title' in item) {
+        const pageItem = item as WebsitePage;
         setPageForm({
-          title: item.title || '',
-          slug: item.slug || '',
-          page_type: item.page_type || 'custom',
-          content: item.content || '',
-          meta_title: item.meta_title || '',
-          meta_description: item.meta_description || '',
-          meta_keywords: item.meta_keywords || '',
-          status: item.status || 'draft',
-          is_featured: item.is_featured || false,
-          display_order: item.display_order || 0,
-          template: item.template || 'default'
+          title: pageItem.title || '',
+          slug: pageItem.slug || '',
+          page_type: pageItem.page_type || 'custom',
+          content: pageItem.content || '',
+          meta_title: pageItem.meta_title || '',
+          meta_description: pageItem.meta_description || '',
+          meta_keywords: pageItem.meta_keywords || '',
+          status: pageItem.status || 'draft',
+          is_featured: pageItem.is_featured || false,
+          display_order: pageItem.display_order || 0,
+          template: pageItem.template || 'default'
         });
       } else {
         setPageForm({
@@ -211,12 +212,13 @@ export default function WebsitePages() {
         });
       }
     } else if (type === 'faq-item') {
-      if (item) {
+      if (item && 'question' in item) {
+        const faqItem = item as FAQItem;
         setFaqItemForm({
-          question: item.question || '',
-          answer: item.answer || '',
-          display_order: item.display_order || 0,
-          is_active: item.is_active !== undefined ? item.is_active : true
+          question: faqItem.question || '',
+          answer: faqItem.answer || '',
+          display_order: faqItem.display_order || 0,
+          is_active: faqItem.is_active !== undefined ? faqItem.is_active : true
         });
       } else {
         setFaqItemForm({
@@ -255,8 +257,8 @@ export default function WebsitePages() {
 
     try {
       const url = editingItem 
-        ? `${env.API_URL}/api/admin/website-pages/${editingItem.id}`
-        : `${env.API_URL}/api/admin/website-pages`;
+        ? `${env.API_BASE_URL}/admin/website-pages/${editingItem.id}`
+        : `${env.API_BASE_URL}/admin/website-pages`;
       
       const method = editingItem ? 'PUT' : 'POST';
       
@@ -279,7 +281,8 @@ export default function WebsitePages() {
       const message = editingItem ? 'Page updated successfully!' : 'Page created successfully!';
       toast.success(message);
     } catch (err: unknown) {
-      setError(err.message);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save page';
+      setError(errorMessage);
     }
   };
 
@@ -289,8 +292,8 @@ export default function WebsitePages() {
 
     try {
       const url = editingItem 
-        ? `${env.API_URL}/api/admin/website-pages/faq/items/${editingItem.id}`
-        : `${env.API_URL}/api/admin/website-pages/faq/items`;
+        ? `${env.API_BASE_URL}/admin/website-pages/faq/items/${editingItem.id}`
+        : `${env.API_BASE_URL}/admin/website-pages/faq/items`;
       
       const method = editingItem ? 'PUT' : 'POST';
       
@@ -328,7 +331,8 @@ export default function WebsitePages() {
       const message = editingItem ? 'FAQ item updated successfully!' : 'FAQ item created successfully!';
       toast.success(message);
     } catch (err: unknown) {
-      setError(err.message);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save page';
+      setError(errorMessage);
     }
   };
 
@@ -336,7 +340,7 @@ export default function WebsitePages() {
     if (!confirm('Are you sure you want to delete this page?')) return;
 
     try {
-      const response = await fetch(`${env.API_URL}/api/admin/website-pages/${pageId}`, {
+      const response = await fetch(`${env.API_BASE_URL}/admin/website-pages/${pageId}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
         credentials: 'include'
@@ -356,7 +360,7 @@ export default function WebsitePages() {
     if (!confirm('Are you sure you want to delete this FAQ item?')) return;
 
     try {
-      const response = await fetch(`${env.API_URL}/api/admin/website-pages/faq/items/${itemId}`, {
+      const response = await fetch(`${env.API_BASE_URL}/admin/website-pages/faq/items/${itemId}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
         credentials: 'include'

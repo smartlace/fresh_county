@@ -49,7 +49,7 @@ export default function Shipping() {
     is_active: true
   });
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://freshcounty.com/api';
 
   useEffect(() => {
     loadShippingZones();
@@ -61,7 +61,7 @@ export default function Shipping() {
       setLoading(true);
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/shipping-zones`, {
+      const response = await fetch(`${API_BASE_URL}/admin/shipping-zones`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -89,7 +89,7 @@ export default function Shipping() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/shipping-zones/stats`, {
+      const response = await fetch(`${API_BASE_URL}/admin/shipping-zones/stats`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -126,7 +126,7 @@ export default function Shipping() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/shipping-zones`, {
+      const response = await fetch(`${API_BASE_URL}/admin/shipping-zones`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -174,7 +174,7 @@ export default function Shipping() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/shipping-zones/${selectedZone.id}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/shipping-zones/${selectedZone.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -209,7 +209,7 @@ export default function Shipping() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/shipping-zones/${zone.id}/toggle-status`, {
+      const response = await fetch(`${API_BASE_URL}/admin/shipping-zones/${zone.id}/toggle-status`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -241,7 +241,7 @@ export default function Shipping() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/shipping-zones/${zone.id}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/shipping-zones/${zone.id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -491,7 +491,7 @@ export default function Shipping() {
           )}
         </div>
 
-        {/* Popular Zones Section */}
+        {/* Popular Zones Section - COMMENTED OUT 
         {popularZones.length > 0 && (
           <div className="mt-8 bg-white shadow rounded-lg">
             <div className="px-6 py-4 border-b border-gray-200">
@@ -541,6 +541,7 @@ export default function Shipping() {
             </div>
           </div>
         )}
+        */}
       </div>
 
       {/* Create Modal */}

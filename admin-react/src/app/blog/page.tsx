@@ -113,7 +113,7 @@ export default function BlogPage() {
     meta_title: '',
     meta_description: '',
     meta_keywords: '',
-    status: 'draft' as const,
+    status: 'draft' as 'draft' | 'published' | 'scheduled' | 'archived',
     is_featured: false,
     allow_comments: true,
     reading_time: 5,
@@ -159,16 +159,16 @@ export default function BlogPage() {
       if (categoryFilter) params.append('category_id', categoryFilter);
       
       const [postsRes, categoriesRes, tagsRes, statsRes] = await Promise.all([
-        fetch(`${env.API_URL}/api/admin/blog/posts?${params}`, {
+        fetch(`${env.API_BASE_URL}/admin/blog/posts?${params}`, {
           headers: getAuthHeaders()
         }),
-        fetch(`${env.API_URL}/api/admin/blog/categories`, {
+        fetch(`${env.API_BASE_URL}/admin/blog/categories`, {
           headers: getAuthHeaders()
         }),
-        fetch(`${env.API_URL}/api/admin/blog/tags`, {
+        fetch(`${env.API_BASE_URL}/admin/blog/tags`, {
           headers: getAuthHeaders()
         }),
-        fetch(`${env.API_URL}/api/admin/blog/stats`, {
+        fetch(`${env.API_BASE_URL}/admin/blog/stats`, {
           headers: getAuthHeaders()
         })
       ]);
@@ -204,7 +204,7 @@ export default function BlogPage() {
 
   const loadBlogSettings = async () => {
     try {
-      const response = await fetch(`${env.API_URL}/api/blog/public/settings`);
+      const response = await fetch(`${env.API_BASE_URL}/blog/public/settings`);
       const data = await response.json();
       
       if (data.success && data.data?.settings) {
@@ -219,7 +219,7 @@ export default function BlogPage() {
   const saveBlogSettings = async () => {
     try {
       setSettingsLoading(true);
-      const response = await fetch(`${env.API_URL}/api/admin/blog/settings`, {
+      const response = await fetch(`${env.API_BASE_URL}/admin/blog/settings`, {
         method: 'PUT',
         headers: {
           ...getAuthHeaders(),
@@ -259,7 +259,7 @@ export default function BlogPage() {
           meta_title: blogPost.meta_title || '',
           meta_description: blogPost.meta_description || '',
           meta_keywords: blogPost.meta_keywords || '',
-          status: blogPost.status || 'draft' as 'draft' | 'published' | 'scheduled' | 'archived',
+          status: blogPost.status || 'draft',
           is_featured: blogPost.is_featured || false,
           allow_comments: blogPost.allow_comments !== false,
           reading_time: blogPost.reading_time || 5,
@@ -374,8 +374,8 @@ export default function BlogPage() {
       console.log('Submitting blog post data:', submitData);
 
       const url = editingItem 
-        ? `${env.API_URL}/api/admin/blog/posts/${editingItem.id}`
-        : `${env.API_URL}/api/admin/blog/posts`;
+        ? `${env.API_BASE_URL}/admin/blog/posts/${editingItem.id}`
+        : `${env.API_BASE_URL}/admin/blog/posts`;
       
       const method = editingItem ? 'PUT' : 'POST';
       
@@ -397,8 +397,9 @@ export default function BlogPage() {
       closeModal();
     } catch (err: unknown) {
       console.error('Blog post submission error:', err);
-      setError(err.message);
-      toast.error(err.message || 'Failed to save blog post');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save blog post';
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
@@ -409,8 +410,8 @@ export default function BlogPage() {
     try {
       const isEditing = editingItem && modalType === 'category';
       const url = isEditing 
-        ? `${env.API_URL}/api/admin/blog/categories/${editingItem.id}`
-        : `${env.API_URL}/api/admin/blog/categories`;
+        ? `${env.API_BASE_URL}/admin/blog/categories/${editingItem.id}`
+        : `${env.API_BASE_URL}/admin/blog/categories`;
       
       const response = await fetch(url, {
         method: isEditing ? 'PUT' : 'POST',
@@ -427,8 +428,9 @@ export default function BlogPage() {
       await fetchData();
       closeModal();
     } catch (err: unknown) {
-      setError(err.message);
-      toast.error(err.message || 'Failed to save category');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save category';
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
@@ -439,8 +441,8 @@ export default function BlogPage() {
     try {
       const isEditing = editingItem && modalType === 'tag';
       const url = isEditing 
-        ? `${env.API_URL}/api/admin/blog/tags/${editingItem.id}`
-        : `${env.API_URL}/api/admin/blog/tags`;
+        ? `${env.API_BASE_URL}/admin/blog/tags/${editingItem.id}`
+        : `${env.API_BASE_URL}/admin/blog/tags`;
       
       const response = await fetch(url, {
         method: isEditing ? 'PUT' : 'POST',
@@ -457,8 +459,9 @@ export default function BlogPage() {
       await fetchData();
       closeModal();
     } catch (err: unknown) {
-      setError(err.message);
-      toast.error(err.message || 'Failed to save tag');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save tag';
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
@@ -466,7 +469,7 @@ export default function BlogPage() {
     if (!confirm('Are you sure you want to delete this blog post?')) return;
 
     try {
-      const response = await fetch(`${env.API_URL}/api/admin/blog/posts/${postId}`, {
+      const response = await fetch(`${env.API_BASE_URL}/admin/blog/posts/${postId}`, {
         method: 'DELETE',
         headers: getAuthHeaders()
       });
@@ -478,8 +481,9 @@ export default function BlogPage() {
       toast.success('Blog post deleted successfully!');
       await fetchData();
     } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete post';
       setError('Failed to delete post');
-      toast.error(err.message || 'Failed to delete post');
+      toast.error(errorMessage);
     }
   };
 
@@ -487,7 +491,7 @@ export default function BlogPage() {
     if (!confirm(`Are you sure you want to delete the category "${categoryName}"? This action cannot be undone.`)) return;
 
     try {
-      const response = await fetch(`${env.API_URL}/api/admin/blog/categories/${categoryId}`, {
+      const response = await fetch(`${env.API_BASE_URL}/admin/blog/categories/${categoryId}`, {
         method: 'DELETE',
         headers: getAuthHeaders()
       });
@@ -500,8 +504,9 @@ export default function BlogPage() {
       toast.success('Blog category deleted successfully!');
       await fetchData();
     } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete category';
       setError('Failed to delete category');
-      toast.error(err.message || 'Failed to delete category');
+      toast.error(errorMessage);
     }
   };
 
@@ -509,7 +514,7 @@ export default function BlogPage() {
     if (!confirm(`Are you sure you want to delete the tag "${tagName}"? This action cannot be undone.`)) return;
 
     try {
-      const response = await fetch(`${env.API_URL}/api/admin/blog/tags/${tagId}`, {
+      const response = await fetch(`${env.API_BASE_URL}/admin/blog/tags/${tagId}`, {
         method: 'DELETE',
         headers: getAuthHeaders()
       });
@@ -522,8 +527,9 @@ export default function BlogPage() {
       toast.success('Blog tag deleted successfully!');
       await fetchData();
     } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete tag';
       setError('Failed to delete tag');
-      toast.error(err.message || 'Failed to delete tag');
+      toast.error(errorMessage);
     }
   };
 
@@ -547,7 +553,7 @@ export default function BlogPage() {
         </div>
 
         {/* Stats Cards */}
-        {stats && (
+        {stats && stats.totalStats && stats.commentsStats && (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             <div className="bg-white overflow-hidden shadow rounded-lg">
               <div className="p-5">
@@ -558,7 +564,7 @@ export default function BlogPage() {
                   <div className="ml-5 w-0 flex-1">
                     <dl>
                       <dt className="text-sm font-medium text-gray-500 truncate">Total Posts</dt>
-                      <dd className="text-lg font-medium text-gray-900">{stats.totalStats.total_posts.toLocaleString()}</dd>
+                      <dd className="text-lg font-medium text-gray-900">{(stats.totalStats.total_posts || 0).toLocaleString()}</dd>
                     </dl>
                   </div>
                 </div>
@@ -574,7 +580,7 @@ export default function BlogPage() {
                   <div className="ml-5 w-0 flex-1">
                     <dl>
                       <dt className="text-sm font-medium text-gray-500 truncate">Published</dt>
-                      <dd className="text-lg font-medium text-gray-900">{stats.totalStats.published_posts.toLocaleString()}</dd>
+                      <dd className="text-lg font-medium text-gray-900">{(stats.totalStats.published_posts || 0).toLocaleString()}</dd>
                     </dl>
                   </div>
                 </div>
@@ -590,7 +596,7 @@ export default function BlogPage() {
                   <div className="ml-5 w-0 flex-1">
                     <dl>
                       <dt className="text-sm font-medium text-gray-500 truncate">Total Views</dt>
-                      <dd className="text-lg font-medium text-gray-900">{stats.totalStats.total_views.toLocaleString()}</dd>
+                      <dd className="text-lg font-medium text-gray-900">{(stats.totalStats.total_views || 0).toLocaleString()}</dd>
                     </dl>
                   </div>
                 </div>
@@ -606,7 +612,7 @@ export default function BlogPage() {
                   <div className="ml-5 w-0 flex-1">
                     <dl>
                       <dt className="text-sm font-medium text-gray-500 truncate">Comments</dt>
-                      <dd className="text-lg font-medium text-gray-900">{stats.commentsStats.total_comments.toLocaleString()}</dd>
+                      <dd className="text-lg font-medium text-gray-900">{(stats.commentsStats.total_comments || 0).toLocaleString()}</dd>
                     </dl>
                   </div>
                 </div>
@@ -809,7 +815,7 @@ export default function BlogPage() {
                                 </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {post.view_count.toLocaleString()}
+                                {(post.view_count || 0).toLocaleString()}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {new Date(post.created_at).toLocaleDateString()}

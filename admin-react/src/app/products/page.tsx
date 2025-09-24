@@ -71,7 +71,7 @@ export default function Products() {
     { name: '', price: '', sale_price: '' }
   ]);
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://freshcounty.com/api';
 
   useEffect(() => {
     loadProducts();
@@ -89,7 +89,7 @@ export default function Products() {
       setLoading(true);
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      let url = `${API_BASE_URL}/api/products?page=${currentPage}&limit=20`;
+      let url = `${API_BASE_URL}/products?page=${currentPage}&limit=20`;
       if (statusFilter) url += `&status=${statusFilter}`;
       if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
 
@@ -121,7 +121,7 @@ export default function Products() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/products/categories`, {
+      const response = await fetch(`${API_BASE_URL}/products/categories`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -143,7 +143,7 @@ export default function Products() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/product-variations/types/suggestions?query=${encodeURIComponent(query)}`, {
+      const response = await fetch(`${API_BASE_URL}/product-variations/types/suggestions?query=${encodeURIComponent(query)}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -189,7 +189,7 @@ export default function Products() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/product-variations/products/${productId}`, {
+      const response = await fetch(`${API_BASE_URL}/product-variations/products/${productId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -281,7 +281,7 @@ export default function Products() {
         // For editing, check if it has variables
         if (hasVariables) {
           // Update product with variables (we'll need to create this endpoint)
-          url = `${API_BASE_URL}/api/product-variations/products-with-variations/${selectedProduct?.id}`;
+          url = `${API_BASE_URL}/product-variations/products-with-variations/${selectedProduct?.id}`;
           method = 'PUT';
           
           // Add variable product data to payload
@@ -289,20 +289,20 @@ export default function Products() {
           payload.variables = variables.filter(v => v.name && v.price);
         } else {
           // Regular product update
-          url = `${API_BASE_URL}/api/products/${selectedProduct?.id}`;
+          url = `${API_BASE_URL}/products/${selectedProduct?.id}`;
           method = 'PUT';
         }
       } else {
         // For creating new products, check if it's a variable product
         if (hasVariables) {
-          url = `${API_BASE_URL}/api/product-variations/products-with-variations`;
+          url = `${API_BASE_URL}/product-variations/products-with-variations`;
           method = 'POST';
           
           // Add variable product data to payload
           payload.variable_type = variableType;
           payload.variables = variables.filter(v => v.name && v.price);
         } else {
-          url = `${API_BASE_URL}/api/products`;
+          url = `${API_BASE_URL}/products`;
           method = 'POST';
         }
       }
@@ -343,7 +343,7 @@ export default function Products() {
     try {
       const token = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
       
-      const response = await fetch(`${API_BASE_URL}/api/products/${productId}`, {
+      const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
