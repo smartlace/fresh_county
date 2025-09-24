@@ -194,6 +194,12 @@ npm run build
 - `next.config.js` (production configuration)
 - `server.js` (create this file below)
 
+**⚠️ IMPORTANT: Static Files for Root Domain**
+**Also copy ALL files from `frontend/public/` to `/public_html/` (root directory):**
+- `home-bg.jpg`, `nws.png`, `feature1.png`, `feature2.png`
+- `logo.png`, `favicon.ico`, and all other static assets
+- This makes images accessible at `https://yourdomain.com/home-bg.jpg`
+
 **Create `/public_html/frontend/server.js`:**
 ```javascript
 const { createServer } = require('http')
@@ -327,8 +333,20 @@ RewriteEngine On
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Route to frontend application
+# Serve static files directly (images, fonts, etc.)
+RewriteCond %{REQUEST_URI} \.(jpg|jpeg|png|gif|svg|ico|css|js|woff|woff2|ttf|eot|pdf|txt|xml)$ [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^(.*)$ - [L]
+
+# Route specific directories to their applications
+RewriteRule ^admin(.*)$ /admin$1 [L,QSA]
+RewriteRule ^api(.*)$ /api$1 [L,QSA]
+RewriteRule ^uploads(.*)$ /uploads$1 [L,QSA]
+
+# Route everything else to frontend application
 RewriteCond %{REQUEST_URI} !^/(frontend|admin|api|uploads)/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ /frontend/$1 [L,QSA]
 ```
 
@@ -530,6 +548,19 @@ public_html/
 3. **API Connectivity**: Verify admin can reach backend API at `/api/health`
 4. **Environment Variables**: Confirm `NEXT_PUBLIC_API_URL` points to correct backend
 5. **Session Issues**: Clear browser cache and cookies for admin domain
+
+**Static Files (Images) Not Loading (404 Errors):**
+1. **Copy Static Files**: Copy ALL files from `frontend/public/` to `/public_html/` root directory
+2. **Check File Permissions**: Set permissions to 644 for files, 755 for directories
+3. **Verify .htaccess**: Ensure main `/public_html/.htaccess` has static file rules:
+   ```apache
+   # Serve static files directly
+   RewriteCond %{REQUEST_URI} \.(jpg|jpeg|png|gif|svg|ico|css|js)$ [NC]
+   RewriteCond %{REQUEST_FILENAME} -f
+   RewriteRule ^(.*)$ - [L]
+   ```
+4. **Test Direct Access**: Try accessing `https://yourdomain.com/logo.png` directly
+5. **Clear CDN/Cache**: If using Cloudflare or similar, purge cache
 
 **Frontend/Admin Not Loading:**
 1. Check `.next` folder uploaded completely
