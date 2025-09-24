@@ -346,10 +346,28 @@ RewriteRule ^(.*)$ /frontend/$1 [L,QSA]
     Deny from all
 </Files>
 
-# CORS headers
-Header add Access-Control-Allow-Origin "*"
-Header add Access-Control-Allow-Headers "origin, x-requested-with, content-type, authorization"
-Header add Access-Control-Allow-Methods "PUT, GET, POST, DELETE, OPTIONS"
+# Secure CORS headers for specific domains only
+Header always set Access-Control-Allow-Origin "https://freshcounty.com"
+Header always set Access-Control-Allow-Credentials "true"
+Header always set Access-Control-Allow-Headers "origin, x-requested-with, content-type, authorization, x-csrftoken"
+Header always set Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+Header always set Access-Control-Max-Age "3600"
+
+# Handle preflight OPTIONS requests
+RewriteEngine On
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
+# Security headers for API
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "DENY"
+Header always set X-XSS-Protection "1; mode=block"
+```
+
+**⚠️ IMPORTANT**: Replace `https://freshcounty.com` with your actual domain. For development, also add:
+```apache
+# Development CORS (add to above configuration during development)
+Header always set Access-Control-Allow-Origin "http://localhost:3000"
 ```
 
 ### 5.3 SSL Certificate Setup
@@ -498,6 +516,18 @@ public_html/
 2. Check MySQL user has ALL PRIVILEGES
 3. Confirm database name format: `[username]_freshcounty_prod`
 4. Test connection via phpMyAdmin
+
+**Admin Dashboard Access Issues:**
+1. **CORS Configuration**: Update `/public_html/api/.htaccess` with secure CORS headers:
+   ```apache
+   # Replace wildcard (*) with specific domain
+   Header always set Access-Control-Allow-Origin "https://admin.freshcounty.com"
+   Header always set Access-Control-Allow-Credentials "true"
+   ```
+2. **Authentication Errors**: Check browser console for "blocked by CORS policy" errors
+3. **API Connectivity**: Verify admin can reach backend API at `/api/health`
+4. **Environment Variables**: Confirm `NEXT_PUBLIC_API_URL` points to correct backend
+5. **Session Issues**: Clear browser cache and cookies for admin domain
 
 **Frontend/Admin Not Loading:**
 1. Check `.next` folder uploaded completely
