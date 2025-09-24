@@ -24,8 +24,10 @@ The API `.htaccess` configuration with wildcard CORS (`Access-Control-Allow-Orig
     Deny from all
 </Files>
 
-# Secure CORS headers for specific domains only
-Header always set Access-Control-Allow-Origin "https://admin.freshcounty.com"
+# CORS headers for both frontend and admin domains
+SetEnvIf Origin "https://(www\.)?freshcounty\.com$" CORS_ALLOW_ORIGIN=$0
+SetEnvIf Origin "https://admin\.freshcounty\.com$" CORS_ALLOW_ORIGIN=$0
+Header always set Access-Control-Allow-Origin "%{CORS_ALLOW_ORIGIN}e" env=CORS_ALLOW_ORIGIN
 Header always set Access-Control-Allow-Credentials "true"
 Header always set Access-Control-Allow-Headers "origin, x-requested-with, content-type, authorization, x-csrftoken"
 Header always set Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
