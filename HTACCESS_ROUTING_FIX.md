@@ -8,20 +8,20 @@ The main `/public_html/.htaccess` routing needs to properly handle:
 4. Upload files (`freshcounty.com/uploads`)
 5. Frontend application for all other routes
 
-## ✅ CORRECTED CONFIGURATION
+## ✅ UPDATED CONFIGURATION
 
 Replace `/public_html/.htaccess` with:
 
 ```apache
-# Enable compression
+# Enable compression for better performance
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css
     AddOutputFilterByType DEFLATE application/xml application/xhtml+xml
     AddOutputFilterByType DEFLATE application/rss+xml application/javascript
-    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/x-javascript application/json
 </IfModule>
 
-# Cache static assets
+# Cache static assets for better performance
 <IfModule mod_expires.c>
     ExpiresActive on
     ExpiresByType text/css "access plus 1 year"
@@ -29,32 +29,38 @@ Replace `/public_html/.htaccess` with:
     ExpiresByType image/png "access plus 1 year"
     ExpiresByType image/jpg "access plus 1 year"
     ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
 </IfModule>
 
 # Security headers
 Header always set X-Content-Type-Options nosniff
 Header always set X-Frame-Options DENY
 Header always set X-XSS-Protection "1; mode=block"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
 
-# Force HTTPS
+# Force HTTPS in production
 RewriteEngine On
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Serve static files directly (images, fonts, etc.)
-RewriteCond %{REQUEST_URI} \.(jpg|jpeg|png|gif|svg|ico|css|js|woff|woff2|ttf|eot|pdf|txt|xml)$ [NC]
-RewriteCond %{REQUEST_FILENAME} -f
-RewriteRule ^(.*)$ - [L]
+# Application routing - Direct directory access
+RewriteRule ^api/(.*)$ /api/$1 [L,QSA]
+RewriteRule ^uploads/(.*)$ /uploads/$1 [L,QSA]
 
-# Route specific directories to their applications
-RewriteRule ^admin(.*)$ /admin$1 [L,QSA]
-RewriteRule ^api(.*)$ /api$1 [L,QSA]
-RewriteRule ^uploads(.*)$ /uploads$1 [L,QSA]
+# Admin subdomain routing (if using subdomain)
+# This handles admin.freshcounty.com requests
+RewriteCond %{HTTP_HOST} ^admin\.
+RewriteRule ^(.*)$ /admin/$1 [L,QSA]
 
-# Route everything else to frontend application
-RewriteCond %{REQUEST_URI} !^/(frontend|admin|api|uploads)/
+# Frontend application - Handle all other requests
+# Skip if file or directory exists (static files already resolved)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/(admin|api|uploads)/
 RewriteRule ^(.*)$ /frontend/$1 [L,QSA]
 ```
 

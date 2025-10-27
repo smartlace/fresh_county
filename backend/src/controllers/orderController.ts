@@ -245,8 +245,9 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
     await connection.execute(`
       INSERT INTO orders (
         id, user_id, order_status, payment_status, payment_method,
-        total_amount, shipping_address, delivery_type, delivery_cost, shipping_zone_id, shipping_zone_name, payment_reference, coupon_code
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        total_amount, discount_amount, coupon_id, coupon_code,
+        shipping_address, delivery_type, delivery_cost, shipping_zone_id, shipping_zone_name, payment_reference
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       orderId,
       userId,
@@ -254,13 +255,15 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
       'pending',
       payment_method,
       totals.total_amount,
+      totals.discount_amount,
+      totals.applied_coupon ? totals.applied_coupon.id : null,
+      coupon_code || null,
       JSON.stringify(shipping_address),
       delivery_type || 'home',
       delivery_cost || 0,
       shipping_zone_id || null,
       shipping_zone_name || null,
-      orderNumber, // Store order number in payment_reference for now
-      coupon_code || null
+      orderNumber // Store order number in payment_reference for now
     ]);
 
     // Create order items
@@ -427,6 +430,8 @@ export const getUserOrders = async (req: Request, res: Response, next: NextFunct
         o.payment_status, 
         o.payment_method,
         o.total_amount,
+        o.discount_amount,
+        o.coupon_code,
         o.created_at, 
         o.updated_at
       FROM orders o
@@ -447,8 +452,8 @@ export const getUserOrders = async (req: Request, res: Response, next: NextFunct
       const [itemCount] = await pool.execute(`
         SELECT COUNT(*) as item_count FROM order_items WHERE order_id = ?
       `, [orders[i].id]) as any[];
-      orders[i].discount_amount = 0;
       orders[i].item_count = itemCount[0].item_count;
+      // discount_amount is already fetched from the main query, no need to override
     }
 
     // Calculate pagination metadata
@@ -1002,6 +1007,8 @@ export const getAllOrders = async (req: Request, res: Response, next: NextFuncti
         o.payment_status, 
         o.payment_method,
         o.total_amount,
+        o.discount_amount,
+        o.coupon_code,
         o.created_at, 
         u.email as user_email,
         u.first_name,
@@ -1022,10 +1029,7 @@ export const getAllOrders = async (req: Request, res: Response, next: NextFuncti
       
       ordersWithCounts.push({
         ...order,
-        subtotal: order.total_amount,
-        tax_amount: 0,
-        shipping_cost: 0,
-        discount_amount: 0,
+        discount_amount: order.discount_amount || 0,
         item_count: itemCount[0].item_count,
         shipping_address: order.shipping_address || {}
       });

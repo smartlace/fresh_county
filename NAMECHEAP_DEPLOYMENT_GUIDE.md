@@ -302,53 +302,24 @@ npm run build
 
 ## 🔧 **Phase 5: Configuration & Security**
 
-### 5.1 Configure Main .htaccess
-**Create `/public_html/.htaccess`:**
+### 5.1 Main .htaccess Configuration
+**Note**: CloudLinux Passenger automatically handles frontend routing. The existing `.htaccess` file created by your hosting provider should remain unchanged:
+
 ```apache
-# Enable compression
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css
-    AddOutputFilterByType DEFLATE application/xml application/xhtml+xml
-    AddOutputFilterByType DEFLATE application/rss+xml application/javascript
-    AddOutputFilterByType DEFLATE application/x-javascript
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/[username]/public_html/frontend"
+PassengerBaseURI "/"
+PassengerNodejs "/home/[username]/nodevenv/public_html/frontend/22/bin/node"
+PassengerAppType node
+PassengerStartupFile server.js
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION BEGIN
+<IfModule Litespeed>
 </IfModule>
-
-# Cache static assets
-<IfModule mod_expires.c>
-    ExpiresActive on
-    ExpiresByType text/css "access plus 1 year"
-    ExpiresByType application/javascript "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/jpg "access plus 1 year"
-    ExpiresByType image/jpeg "access plus 1 year"
-</IfModule>
-
-# Security headers
-Header always set X-Content-Type-Options nosniff
-Header always set X-Frame-Options DENY
-Header always set X-XSS-Protection "1; mode=block"
-
-# Force HTTPS
-RewriteEngine On
-RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-# Serve static files directly (images, fonts, etc.)
-RewriteCond %{REQUEST_URI} \.(jpg|jpeg|png|gif|svg|ico|css|js|woff|woff2|ttf|eot|pdf|txt|xml)$ [NC]
-RewriteCond %{REQUEST_FILENAME} -f
-RewriteRule ^(.*)$ - [L]
-
-# Route specific directories to their applications
-RewriteRule ^admin(.*)$ /admin$1 [L,QSA]
-RewriteRule ^api(.*)$ /api$1 [L,QSA]
-RewriteRule ^uploads(.*)$ /uploads$1 [L,QSA]
-
-# Route everything else to frontend application
-RewriteCond %{REQUEST_URI} !^/(frontend|admin|api|uploads)/
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ /frontend/$1 [L,QSA]
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION END
 ```
+
+**⚠️ Important**: Do not modify the main `/public_html/.htaccess` file. CloudLinux Passenger handles all routing automatically.
 
 ### 5.2 Configure API .htaccess
 **Create `/public_html/api/.htaccess`:**

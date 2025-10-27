@@ -143,7 +143,7 @@ export default function LoginPage() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 sm:text-sm transition-colors"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base transition-colors touch-manipulation"
                       placeholder="Enter your email address"
                     />
                   </div>
@@ -166,13 +166,14 @@ export default function LoginPage() {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 sm:text-sm transition-colors"
+                      className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base transition-colors touch-manipulation"
                       placeholder="Enter your password"
                     />
                     <button
                       type="button"
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center touch-manipulation"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
                       {showPassword ? (
                         <EyeSlashIcon className="h-5 w-5 text-gray-400 hover:text-gray-600 transition-colors" />
@@ -188,7 +189,8 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all duration-200 transform hover:scale-[1.02]"
+                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm sm:text-base font-medium rounded-xl text-white bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 active:from-orange-800 active:to-amber-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all duration-200 transform hover:scale-[1.02] touch-manipulation"
+                  style={{minHeight: '48px'}}
                 >
                   {loading ? (
                     <>
@@ -205,7 +207,7 @@ export default function LoginPage() {
               </div>
 
               <div className="text-center pt-4">
-                <a href="#" className="text-sm font-medium text-orange-600 hover:text-orange-500 transition-colors">
+                <a href="#" className="text-sm font-medium text-orange-600 hover:text-orange-500 transition-colors inline-block py-2 touch-manipulation">
                   Forgot your password?
                 </a>
               </div>
@@ -236,7 +238,7 @@ export default function LoginPage() {
                   required
                   value={mfaToken}
                   onChange={(e) => setMfaToken(e.target.value.replace(/\D/g, ''))}
-                  className="block w-full px-4 py-4 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-center text-2xl tracking-[0.5em] font-mono transition-colors"
+                  className="block w-full px-4 py-4 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-center text-xl sm:text-2xl tracking-[0.5em] font-mono transition-colors touch-manipulation"
                   placeholder="000000"
                   autoComplete="one-time-code"
                 />
@@ -246,7 +248,8 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading || mfaToken.length !== 6}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all duration-200 transform hover:scale-[1.02]"
+                  className="w-full flex justify-center py-3 px-4 border border-transparent text-sm sm:text-base font-medium rounded-xl text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 active:from-green-800 active:to-emerald-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all duration-200 transform hover:scale-[1.02] touch-manipulation"
+                  style={{minHeight: '48px'}}
                 >
                   {loading ? (
                     <>
@@ -264,7 +267,8 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={resetMFA}
-                  className="w-full flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors"
+                  className="w-full flex justify-center py-3 px-4 border border-gray-300 text-sm sm:text-base font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 active:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors touch-manipulation"
+                  style={{minHeight: '48px'}}
                 >
                   ← Back to Login
                 </button>

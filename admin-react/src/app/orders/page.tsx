@@ -7,6 +7,7 @@ import EmptyState from '@/components/EmptyState';
 import toast from 'react-hot-toast';
 import { Listbox, Transition } from '@headlessui/react';
 import { ChevronUpDownIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon, ClockIcon, Cog6ToothIcon, TruckIcon, CheckCircleIcon, XCircleIcon, CreditCardIcon, UserIcon, EnvelopeIcon, PhoneIcon, MapPinIcon, CalendarIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
+import { getProxiedImageUrl } from '@/utils/imageProxy';
 
 interface Order {
   id: string;
@@ -103,28 +104,6 @@ export default function Orders() {
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://freshcounty.com/api';
 
-  // Helper function to get image URL - uses proxy to avoid CSP issues
-  const getImageUrl = (imageUrl: string | null | undefined): string => {
-    if (!imageUrl) return '';
-    
-    let fullImageUrl = '';
-    
-    // If it's already a full URL, use it as is
-    if (imageUrl.startsWith('http')) {
-      fullImageUrl = imageUrl;
-    }
-    // If it's a relative path, build the full URL
-    else if (imageUrl.startsWith('/uploads/')) {
-      fullImageUrl = `${API_BASE_URL}${imageUrl}`;
-    }
-    // If it's just a filename, assume it's in the products folder
-    else {
-      fullImageUrl = `${API_BASE_URL}/uploads/products/${imageUrl}`;
-    }
-    
-    // Use the image proxy to avoid CSP issues
-    return `/api/proxy-image?url=${encodeURIComponent(fullImageUrl)}`;
-  };
 
   const handleStatusChange = (status: typeof statusOptions[0]) => {
     setSelectedStatus(status);
@@ -952,7 +931,7 @@ export default function Orders() {
                                   {item.product.image ? (
                                     <img
                                       className="h-12 w-12 rounded-lg object-cover border border-gray-200"
-                                      src={getImageUrl(item.product.image)}
+                                      src={getProxiedImageUrl(item.product.image.startsWith('http') ? item.product.image : `${API_BASE_URL}/uploads/products/${item.product.image}`)}
                                       alt={item.product.name}
                                     />
                                   ) : (

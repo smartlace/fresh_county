@@ -13,9 +13,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'URL parameter is required' }, { status: 400 });
     }
 
+    console.log('🖼️ Proxy image request for URL:', url);
+
     // Allow localhost:3001 URLs and trusted external image sources
     const allowedDomains = [
-      'https://freshcounty.com/api/',
+      'https://freshcounty.com/api',
       'https://images.unsplash.com/',
       'https://unsplash.com/',
       'https://via.placeholder.com/'
@@ -24,8 +26,11 @@ export async function GET(request: NextRequest) {
     const isAllowed = allowedDomains.some(domain => url.startsWith(domain));
     
     if (!isAllowed) {
+      console.log('❌ URL domain not allowed:', url, 'Allowed domains:', allowedDomains);
       return NextResponse.json({ error: 'URL domain not allowed' }, { status: 400 });
     }
+
+    console.log('✅ URL allowed, fetching image:', url);
 
     // Fetch the image from the backend
     const response = await fetch(url);
