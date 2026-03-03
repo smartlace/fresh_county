@@ -1,0 +1,211 @@
+/* ==========================================================================
+   FRESHCOUNTY CLEAN GLOBAL STYLES
+   ========================================================================== */
+
+/* CSS Custom Properties (Variables) */
+:root {
+  /* Colors */
+  --color-primary: #f97316;     /* orange-500 */
+  --color-primary-hover: #ea580c; /* orange-600 */
+  --color-text: #2A2828;        /* body text color */
+  --color-heading: #151414;     /* heading color */
+  --color-background: #ffffff;
+  
+  /* Font Variables - Let Tailwind handle font configuration */
+}
+
+/* Base Styles */
+body, p, span, div, a, li, td, th, input, textarea, button {
+  font-family: var(--font-inter), system-ui, sans-serif !important;
+}
+
+body {
+  background-color: #f5f5f5;
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-roboto-condensed), system-ui, sans-serif;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* Default heading color - can be overridden by utility classes */
+h1:not(.text-white), 
+h2:not(.text-white), 
+h3:not(.text-white), 
+h4:not(.text-white), 
+h5:not(.text-white), 
+h6:not(.text-white) {
+  color: var(--color-heading);
+}
+
+/* Heading weight adjustments for Roboto Condensed */
+h1 { font-weight: 700; }
+h2 { font-weight: 600; }
+h3 { font-weight: 600; }
+h4 { font-weight: 500; }
+h5 { font-weight: 500; }
+h6 { font-weight: 400; }
+
+/* ==========================================================================
+   COMPONENT CLASSES
+   ========================================================================== */
+
+@layer components {
+  /* Buttons */
+  .btn-primary {
+    @apply bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2;
+  }
+
+  /* Layout */
+  .section-padding {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+
+  /* Header */
+  .header {
+    @apply bg-white border-b border-gray-200 sticky top-0 z-50;
+  }
+
+  .header-content {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between py-4;
+  }
+
+  .header-logo {
+    @apply w-18 h-18 object-contain;
+  }
+
+  .header-nav {
+    @apply hidden md:flex items-center space-x-8;
+  }
+
+  .header-nav-link {
+    @apply text-gray-700 hover:text-orange-500 font-medium transition-colors duration-200;
+  }
+
+  .header-actions {
+    @apply flex items-center space-x-4;
+  }
+
+  .header-mobile-menu {
+    @apply md:hidden absolute top-full left-0 right-0 bg-white border-b border-gray-200 py-4;
+  }
+
+  .header-mobile-nav {
+    @apply space-y-4 px-4;
+  }
+
+  .header-mobile-link {
+    @apply block text-gray-700 hover:text-orange-500 font-medium py-2;
+  }
+
+  .header-cart-badge {
+    @apply absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center;
+  }
+
+  /* Hero Section */
+  .hero {
+    @apply relative h-[600px] overflow-hidden;
+  }
+
+  .hero-content {
+    @apply relative z-20 h-full flex items-center;
+  }
+
+  .hero-text {
+    @apply max-w-2xl;
+  }
+
+  .hero-title {
+    @apply text-5xl md:text-6xl font-bold text-white mb-6 leading-tight;
+    font-family: var(--font-roboto-condensed), system-ui, sans-serif;
+  }
+
+  .hero-description {
+    @apply text-lg md:text-xl text-white mb-8 leading-relaxed max-w-lg;
+  }
+
+  /* Footer */
+  .footer {
+    @apply bg-white border-t border-gray-200;
+  }
+
+  .footer-content {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12;
+  }
+
+  .footer-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8;
+  }
+
+  .footer-logo-section {
+    @apply lg:col-span-1;
+  }
+
+  .footer-logo {
+    @apply w-[90px] h-[90px] object-contain;
+  }
+
+  .footer-section {
+    @apply space-y-4;
+  }
+
+  .footer-list {
+    @apply space-y-2;
+  }
+
+  .footer-section-title {
+    @apply text-sm font-semibold uppercase tracking-wider mb-4;
+    font-family: var(--font-roboto-condensed), system-ui, sans-serif;
+    color: var(--color-heading);
+  }
+
+  .footer-link {
+    @apply text-sm text-gray-600 hover:text-orange-500 transition-colors duration-200;
+  }
+
+  .footer-bottom {
+    @apply mt-8 pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center;
+  }
+
+  .footer-social {
+    @apply flex space-x-3;
+  }
+
+  .footer-social-link {
+    @apply text-gray-400 hover:text-orange-500 transition-colors duration-200;
+  }
+
+  /* Search */
+  .search-icon {
+    @apply absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5;
+  }
+
+  .search-input {
+    @apply w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200;
+  }
+
+  /* Scrollbar Hide Utility */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+
+/* Mobile First Approach */
+@media (max-width: 640px) {
+  .hero-title {
+    @apply text-4xl;
+  }
+}
